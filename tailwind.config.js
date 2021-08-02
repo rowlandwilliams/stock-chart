@@ -10,6 +10,7 @@ module.exports = {
       current: "currentColor",
       background: "#100F36",
       chart_background: "#1a1b3e",
+      bar_colour: '#B0A7FF'
     },
   },
   variants: {
