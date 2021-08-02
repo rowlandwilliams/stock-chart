@@ -15,3 +15,18 @@ export interface Margin {
   bottom: number;
   left: number;
 }
+
+export interface StockValue {
+  [key: string]: string | number;
+  stockMetric: string;
+  date: number;
+  value: number;
+}
+
+export interface ConvertedData {
+  [key: string]: string | StockValue[];
+  stockMetric: string;
+  values: StockValue[];
+}
+
+export type StockKey = string;

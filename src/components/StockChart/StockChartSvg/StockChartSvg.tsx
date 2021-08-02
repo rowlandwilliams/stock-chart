@@ -1,13 +1,14 @@
 import { useEffect } from "react";
-import { StockData } from "../../../types";
-import { addChartAxes } from "./utils/addChartAxes";
+import { StockData, StockKey } from "../../../types";
+import { addChartAxesAndLines } from "./utils/addChartAxesAndLines";
 import { initializeStockChart } from "./utils/initializeStockChart";
 
 interface Props {
   stockData: StockData[];
+  stockKeys: StockKey[];
 }
 
-export const StockChartSvg = ({ stockData }: Props) => {
+export const StockChartSvg = ({ stockData, stockKeys }: Props) => {
   useEffect(() => {
     plotChart();
   });
@@ -23,7 +24,7 @@ export const StockChartSvg = ({ stockData }: Props) => {
     const margin = { top: 10, right: 0, bottom: 20, left: 0 };
 
     initializeStockChart(margin);
-    addChartAxes(stockData, margin);
+    addChartAxesAndLines(stockData, stockKeys, margin);
   };
 
   return <div className="h-80" id="stock-chart"></div>;
