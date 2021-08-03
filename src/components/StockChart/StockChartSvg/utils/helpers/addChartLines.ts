@@ -8,8 +8,7 @@ export const addChartLines = (
   chart: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   stockData: StockData[],
   stockKeys: StockKey[],
-  plotLine: d3.Line<StockValue>,
- 
+  plotLine: d3.Line<StockValue>
 ) => {
   // convert stock data to long format for plotting
   const convertedData = convertStockDataForChart(stockData, stockKeys);
@@ -30,10 +29,10 @@ export const addChartLines = (
     .on("mouseover", (e) => {
       const mouse = d3.pointer(e, this);
       focus.attr(
-        "transform", 
+        "transform",
         "translate(" +
           mouse[0] +
-          "," + // 
+          "," + //
           (mouse[1] - 10) +
           ")"
       );

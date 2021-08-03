@@ -25,8 +25,8 @@ export const addChartAxesAndLines = (
   // define xScale based on date domain
   const xScale = d3.scaleTime().domain(datesDomain).range([0, width]);
   const xAxis = d3.axisBottom(xScale);
-  xAxis.ticks(0);
-  // xAxis.ticks(d3.timeYear.every(1)).tickSize(0);
+  // xAxis.ticks(0);
+  xAxis.ticks(d3.timeMonth.every(1)).tickSize(0);
 
   // add x axis
   chart
@@ -51,5 +51,5 @@ export const addChartAxesAndLines = (
     .y((d) => yScale(d.value));
 
   addChartLines(chart, stockData, stockKeys, plotLine);
-  addChartBars(chart, stockData, width, height, volumeDomain, xScale);
+  // addChartBars(chart, stockData, width, height, volumeDomain, xScale);
 };

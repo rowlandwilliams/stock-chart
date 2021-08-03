@@ -3,19 +3,28 @@ import { companyStockData } from "./data/companyStockData";
 import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 import classNames from "classnames";
 
+const stockData = companyStockData["apple"].map((stockObj) => ({
+  ...stockObj,
+  date: Date.parse(stockObj.date),
+}));
+
+const latestDate = stockData.slice(-1)[0].date;
+console.log(latestDate);
+
 interface Props {
   companyName?: string;
 }
 
-const labels = [{ label: "1M" }, { label: "1Y" }];
+const labels = [
+  { label: "1M", timescale: 2629800000 },
+  { label: "1Y", timescale: 31556952000 },
+];
 
 export const StockChart = ({ companyName = "apple" }: Props) => {
   const [activeTimeLabel, setActiveTimeLabel] = useState<string>("1Y");
+  const [filteredChartData, setFilteredChartData] = useState(stockData);
 
-  const stockData = companyStockData[companyName].map((stockObj) => ({
-    ...stockObj,
-    date: Date.parse(stockObj.date),
-  }));
+  console.log("chart data", filteredChartData);
 
   const reqKeys = ["open", "close", "adjClose", "low", "high"];
   const stockKeys = Object.keys(stockData[0]).filter((key) =>
@@ -29,20 +38,30 @@ export const StockChart = ({ companyName = "apple" }: Props) => {
         <div className="flex">
           {labels.map((labelObject) => (
             <div
-              className={classNames("mx-2 px-2 rounded-lg bg-opacity-20 cursor-pointer", {
-                "bg-bar_colour text-white":
-                  activeTimeLabel === labelObject.label,
-                "text-bar_colour text-opacity-20":
-                  activeTimeLabel !== labelObject.label,
-              })}
-              onClick={() => setActiveTimeLabel(labelObject.label)}
+              className={classNames(
+                "ml-2 px-2 rounded-lg bg-opacity-20 cursor-pointer",
+                {
+                  "bg-bar_colour text-white":
+                    activeTimeLabel === labelObject.label,
+                  "text-bar_colour text-opacity-20":
+                    activeTimeLabel !== labelObject.label,
+                }
+              )}
+              onClick={() => {
+                setActiveTimeLabel(labelObject.label);
+                setFilteredChartData(
+                  stockData.filter(
+                    (x) => x.date > latestDate - labelObject.timescale
+                  )
+                );
+              }}
             >
               {labelObject.label}
             </div>
           ))}
         </div>
       </div>
-      <StockChartSvg stockData={stockData} stockKeys={stockKeys} />
+      <StockChartSvg stockData={filteredChartData} stockKeys={stockKeys} />
     </div>
   );
 };
