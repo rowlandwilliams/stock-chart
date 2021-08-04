@@ -55,13 +55,18 @@ export const StockChart = ({ companyName = "apple" }: Props) => {
                   )
                 );
               }}
+              id="suh"
             >
               {labelObject.label}
             </div>
           ))}
         </div>
       </div>
-      <StockChartSvg stockData={filteredChartData} stockKeys={stockKeys} />
+      <StockChartSvg
+        stockData={filteredChartData}
+        stockKeys={stockKeys}
+        isMonth={activeTimeLabel === "1M"}
+      />
     </div>
   );
 };
