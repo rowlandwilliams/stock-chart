@@ -5,7 +5,8 @@ import { StockChart } from "./components/StockChart/StockChart";
 function App() {
   return (
     <div className="m-2">
-      <StockChart />
+      <StockChart companyName="apple" />
+      <StockChart companyName="microsoft" />
     </div>
   );
 }

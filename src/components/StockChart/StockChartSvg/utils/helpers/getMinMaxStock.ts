@@ -7,12 +7,12 @@ export const getMinMaxStock = (
   const data: number[] = stockValues
     .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
     .flat();
-  return [0, Math.max.apply(null, data) + 2];
+  return [Math.min.apply(null, data) - 10, Math.max.apply(null, data)];
 };
 
 export const getMinMaxVolume = (stockValues: StockData[]) => {
   const data: number[] = stockValues.map(
     (stockObj: StockData) => stockObj.volume
   );
-  return [0, Math.max.apply(null, data) * 2];
+  return [0, Math.max.apply(null, data)];
 };

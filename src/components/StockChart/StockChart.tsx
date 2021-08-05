@@ -3,16 +3,8 @@ import { companyStockData } from "./data/companyStockData";
 import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 import classNames from "classnames";
 
-const stockData = companyStockData["apple"].map((stockObj) => ({
-  ...stockObj,
-  date: Date.parse(stockObj.date),
-}));
-
-const latestDate = stockData.slice(-1)[0].date;
-console.log(latestDate);
-
 interface Props {
-  companyName?: string;
+  companyName: string;
 }
 
 const labels = [
@@ -20,11 +12,15 @@ const labels = [
   { label: "1Y", timescale: 31556952000 },
 ];
 
-export const StockChart = ({ companyName = "apple" }: Props) => {
+export const StockChart = ({ companyName }: Props) => {
+  const stockData = companyStockData[companyName].map((stockObj) => ({
+    ...stockObj,
+    date: Date.parse(stockObj.date),
+  }));
+  const latestDate = stockData.slice(-1)[0].date;
+
   const [activeTimeLabel, setActiveTimeLabel] = useState<string>("1Y");
   const [filteredChartData, setFilteredChartData] = useState(stockData);
-
-  console.log("chart data", filteredChartData);
 
   const reqKeys = ["open", "close", "adjClose", "low", "high"];
   const stockKeys = Object.keys(stockData[0]).filter((key) =>
@@ -32,9 +28,12 @@ export const StockChart = ({ companyName = "apple" }: Props) => {
   );
 
   return (
-    <div className="block mx-auto max-w-4xl h-96 p-4 text-white font-semibold bg-chart_background rounded-lg">
+    <div className="block mx-auto max-w-4xl h-96 p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg">
       <div className="flex justify-between">
-        <div>AAPL</div>
+        <div>
+          {companyName.charAt(0).toUpperCase() +
+            companyName.toLowerCase().slice(1)}
+        </div>
         <div className="flex">
           {labels.map((labelObject) => (
             <div
@@ -66,6 +65,7 @@ export const StockChart = ({ companyName = "apple" }: Props) => {
         stockData={filteredChartData}
         stockKeys={stockKeys}
         isMonth={activeTimeLabel === "1M"}
+        companyName={companyName}
       />
     </div>
   );
