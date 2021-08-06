@@ -27,7 +27,6 @@ export const StockChart = ({ companyName }: Props) => {
     return setActiveTimeLabelObject(labelObject);
   };
 
-  console.log(chartIsHovered);
   return (
     <div
       className="block mx-auto max-w-4xl h-96 p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"

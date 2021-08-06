@@ -107,18 +107,24 @@ export const StockChartSvg = ({
         xAxis,
         yAxis,
         convertedData,
-        margin
+        margin,
+        stockData.map((x) => x.date)
       );
     }
   });
 
   return (
     <div className="h-80 w-full" ref={parentRef} id="chart-container">
-      <svg width="100%" height="100%" id={`chart-svg-${companyName}`}>
+      <svg
+        width="100%"
+        height="100%"
+        id={`chart-svg-${companyName}`}
+        pointerEvents="all"
+      >
         <g
           id={`x-axis-${companyName}`}
           className={classNames(
-            "text-white text-opacity-50 transition duration-500",
+            "text-white text-opacity-50 transition duration-150",
             {
               "opacity-1": chartIsHovered,
               "opacity-0": !chartIsHovered,
@@ -126,7 +132,19 @@ export const StockChartSvg = ({
           )}
         ></g>
         <g id={`y-axis-${companyName}`}></g>
-        <g className={`chart-group-${companyName}`}></g>
+        <g id={`chart-group-${companyName}`}></g>
+        <g
+          id={`focus-${companyName}`}
+          className={classNames(
+            "text-white text-opacity-50 transition duration-150",
+            {
+              "opacity-1": chartIsHovered,
+              "opacity-0": !chartIsHovered,
+            }
+          )}
+        >
+          <line></line>
+        </g>
         <rect
           width="100%"
           height="100%"

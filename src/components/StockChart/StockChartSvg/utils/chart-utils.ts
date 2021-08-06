@@ -63,9 +63,27 @@ export const getAxisLabels = (
     return xAxis.ticks(d3.timeWeek.every(1));
   }
 
-  // if (activeTimeLabelObject.label === "3M") {
   return xAxis.ticks(d3.timeMonth.every(1));
-  //}
+};
 
-  // return xAxis.ticks(d3.timeYear.every(1));
+// mousmove function for when svg is hovered
+export const mousemove = (
+  event: PointerEvent,
+  x: d3.ScaleTime<number, number, never>,
+  dates: number[],
+  focusGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
+) => {
+  // convert mouse coordinate to date based on x scale
+  const x0 = x.invert(d3.pointer(event)[0]).getTime();
+
+  // determine the index of the date in dates array that is closest to x0
+  const i = d3.bisect(dates, x0, 1);
+
+  // define dates one before and at index
+  const d0 = dates[i - 1];
+  const d1 = dates[i];
+
+  const d = x0 - d0 > d1 - x0 ? d1 : d0;
+
+  focusGroup.attr("transform", "translate(" + x(d) + "," + 0 + ")");
 };

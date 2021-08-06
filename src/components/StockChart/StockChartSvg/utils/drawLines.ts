@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
+import { mousemove } from "./chart-utils";
 
 const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#A0FCAD", "#E0D9FE"];
 
@@ -16,10 +17,19 @@ export const drawLines = (
   xAxis: d3.Axis<d3.NumberValue | Date>,
   yAxis: d3.Axis<d3.NumberValue>,
   convertedData: ConvertedData[],
-  margin: number
+  margin: number,
+  dates: number[]
 ) => {
   // select lines g
-  const linesGroup = d3.select(`.chart-group-${companyName}`);
+  const linesGroup = d3.select(`#chart-group-${companyName}`);
+
+  const svgGroup = d3.select<SVGSVGElement, unknown>(
+    `#chart-svg-${companyName}`
+  );
+
+  const focusGroup = d3.select<SVGSVGElement, unknown>(
+    `#focus-${companyName} > line`
+  );
 
   // define line plotting function based on x and y scales
   const plotLine = d3
@@ -64,4 +74,21 @@ export const drawLines = (
     .transition()
     .duration(1000)
     .attr("d", (d) => plotLine(d.values));
+
+  focusGroup
+    .style("stroke", "white")
+    .attr("stroke-width", 1)
+    .style("shape-rendering", "crispEdges")
+    .style("opacity", 1)
+    .attr("y1", 0)
+    .attr("y2", height);
+
+  svgGroup
+    .on("mouseenter", () => {
+      focusGroup.attr("stroke-opacity", 1);
+    })
+    .on("mouseleave", () => {
+      focusGroup.attr("stroke-opacity", 0);
+    })
+    .on("mousemove", (event) => mousemove(event, x, dates, focusGroup));
 };
