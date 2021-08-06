@@ -1,4 +1,4 @@
-import { StockValue, StockData, ConvertedData } from "../../../../../types";
+import { StockValue, StockData, ConvertedData } from "../../../../types";
 
 export const convertStockDataForChart = (
   stockData: StockData[],

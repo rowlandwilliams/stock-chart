@@ -6,7 +6,6 @@ function App() {
   return (
     <div className="m-2">
       <StockChart companyName="apple" />
-      <StockChart companyName="microsoft" />
     </div>
   );
 }

@@ -30,3 +30,8 @@ export interface ConvertedData {
 }
 
 export type StockKey = string;
+
+export interface TimeLabel {
+  label: string;
+  timescale: number;
+}

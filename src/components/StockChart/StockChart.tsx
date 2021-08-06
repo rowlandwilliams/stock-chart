@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { companyStockData } from "./data/companyStockData";
-import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 import classNames from "classnames";
+import { TimeLabel } from "../../types";
+import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 
 interface Props {
   companyName: string;
 }
 
 const labels = [
+  { label: "1W", timescale: 2629800000 / 4 },
   { label: "1M", timescale: 2629800000 },
+  { label: "3M", timescale: 7889400000 },
   { label: "1Y", timescale: 31556952000 },
 ];
 
@@ -17,10 +20,10 @@ export const StockChart = ({ companyName }: Props) => {
     ...stockObj,
     date: Date.parse(stockObj.date),
   }));
-  const latestDate = stockData.slice(-1)[0].date;
 
-  const [activeTimeLabel, setActiveTimeLabel] = useState<string>("1Y");
-  const [filteredChartData, setFilteredChartData] = useState(stockData);
+  const [activeTimeLabelObject, setActiveTimeLabelObject] = useState<TimeLabel>(
+    labels[labels.length - 1]
+  );
 
   const reqKeys = ["open", "close", "adjClose", "low", "high"];
   const stockKeys = Object.keys(stockData[0]).filter((key) =>
@@ -41,18 +44,13 @@ export const StockChart = ({ companyName }: Props) => {
                 "ml-2 px-2 rounded-lg bg-opacity-20 cursor-pointer",
                 {
                   "bg-bar_colour text-white":
-                    activeTimeLabel === labelObject.label,
+                    activeTimeLabelObject.label === labelObject.label,
                   "text-bar_colour text-opacity-20":
-                    activeTimeLabel !== labelObject.label,
+                    activeTimeLabelObject.label !== labelObject.label,
                 }
               )}
               onClick={() => {
-                setActiveTimeLabel(labelObject.label);
-                setFilteredChartData(
-                  stockData.filter(
-                    (x) => x.date > latestDate - labelObject.timescale
-                  )
-                );
+                setActiveTimeLabelObject(labelObject);
               }}
               id="suh"
             >
@@ -62,9 +60,9 @@ export const StockChart = ({ companyName }: Props) => {
         </div>
       </div>
       <StockChartSvg
-        stockData={filteredChartData}
+        stockData={stockData}
         stockKeys={stockKeys}
-        isMonth={activeTimeLabel === "1M"}
+        activeTimeLabelObject={activeTimeLabelObject}
         companyName={companyName}
       />
     </div>

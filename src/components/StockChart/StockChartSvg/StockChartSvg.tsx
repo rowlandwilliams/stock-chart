@@ -1,116 +1,114 @@
 import { useEffect, useRef, useState } from "react";
-import { StockData, StockKey, StockValue } from "../../../types";
 import * as d3 from "d3";
-import { easeBack, easeElastic, easeExp, easeLinear, easeQuad } from "d3";
-import { convertStockDataForChart } from "./utils/helpers/convertStockDataForChart";
-import { getMinMaxStock } from "./utils/helpers/getMinMaxStock";
+import { convertStockDataForChart } from "./utils/convertStockDataForChart";
+import { StockData, StockKey, TimeLabel } from "../../../types";
+import {
+  margin,
+  getAxisLabels,
+  getDatesDomain,
+  getMinMaxStock,
+  xAxisScale,
+} from "./utils/chart-utils";
+import { drawLines } from "./utils/drawLines";
 
 interface Props {
   stockData: StockData[];
   stockKeys: StockKey[];
-  isMonth: boolean;
+  activeTimeLabelObject: TimeLabel;
   companyName: string;
 }
-
-const margin = 20;
-const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#A0FCAD", "#E0D9FE"];
-
-const xAxisScale = (datesDomain: number[], width: number) => {
-  return d3.scaleTime().domain(datesDomain).range([0, width]);
-};
 
 export const StockChartSvg = ({
   stockData,
   stockKeys,
-  isMonth,
+  activeTimeLabelObject,
   companyName,
 }: Props) => {
+  // define ref for parent container
   const parentRef = useRef<HTMLInputElement>(null);
 
-  const [width, setWidth] = useState<number>(0);
-  const [height, setHeight] = useState<number>(0);
+  // set intial width of svg container
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
+  // convert data to required format
+  const convertedData = convertStockDataForChart(stockData, stockKeys);
+
+  // on page load set svg height
   useEffect(() => {
-    if (parentRef.current) {
-      setWidth(parentRef.current.offsetWidth);
-      setHeight(parentRef.current.offsetHeight - 20);
+    const { current } = parentRef;
+
+    if (current) {
+      setWidth(current.offsetWidth);
+      setHeight(current.offsetHeight - 20);
+
+      // add resize listener
+      window.addEventListener("resize", () => setWidth(current.offsetWidth));
+      return () => {
+        window.removeEventListener("resize", () =>
+          setWidth(current.offsetWidth)
+        );
+      };
     }
   }, [parentRef]);
 
-  console.log(width);
-
+  // each time time period button is clicked transition lines
   useEffect(() => {
+    // prevent svg being loaded until parent width has been set
     if (width > 0) {
-      const xAxisGroup = d3.select(`#x-axis-${companyName}`);
-      const chartGroup = d3.select(`.chart-group-${companyName}`);
-      const convertedData = convertStockDataForChart(stockData, stockKeys);
+      // determine latest date
+      const latestDate = stockData.slice(-1)[0].date;
 
-      const dates = stockData.map((x) => x.date);
-      const datesDomain = [
-        Math.min.apply(null, dates),
-        Math.max.apply(null, dates),
-      ];
+      // calculate dates domain based on activeTimeLabelObject (the time button which is clicked e.g 1W, 1M ...)
+      const datesDomain = getDatesDomain(
+        stockData,
+        latestDate,
+        activeTimeLabelObject
+      );
 
-      const stocksDomain = getMinMaxStock(stockData, stockKeys);
+      // calculate stocks domain for y axis scaling
+      const stocksDomain = getMinMaxStock(
+        stockData,
+        stockKeys,
+        latestDate,
+        activeTimeLabelObject
+      );
 
       // define x axis scale
       const x = xAxisScale(datesDomain, width);
       const y = d3.scaleLinear();
 
       // define x axis
-      const xAxis = d3.axisBottom(x);
+      const xAxis = d3.axisBottom(x).tickSize(0);
 
-      // determine tick marks based on axis state
-      isMonth
-        ? xAxis.ticks(d3.timeWeek.every(1)).tickSize(0)
-        : xAxis.ticks(d3.timeYear.every(1)).tickSize(0);
+      // determine the number of axis labels to plot based on activeTimeLabel
+      getAxisLabels(activeTimeLabelObject, xAxis);
 
-      const drawAxis = () => {
-        var t = d3.transition().duration(1500).ease(d3.easeLinear);
-
-        // reset axis domain
-        x.domain(datesDomain).range([0, width]);
-        y.domain(stocksDomain).range([height, 50]);
-
-        // transition x axis
-        xAxisGroup
-          .attr("transform", `translate(0, ${height - margin})`)
-          .transition()
-          // .ease(easeExp)
-          .duration(1000)
-          .call(xAxis as any)
-          .on("start", () => {
-            xAxisGroup.select(".domain").remove();
-          });
-
-        const plotLine = d3
-          .line<StockValue>()
-          .x((d) => x(d.date))
-          .y((d) => y(d.value));
-
-        chartGroup
-          .selectAll("path")
-          .data(convertedData)
-          .join("path")
-          .attr("fill", "none")
-          .attr("stroke", (d, i) => supernovaColors[i])
-          .transition()
-          // .ease(easeLinear)
-          // .duration(200)
-          .attr("d", (d) => plotLine(d.values));
-      };
-
-      drawAxis();
+      // draw lines
+      drawLines(
+        companyName,
+        x,
+        y,
+        datesDomain,
+        stocksDomain,
+        width,
+        height,
+        xAxis,
+        convertedData,
+        margin
+      );
     }
-  }, [stockData, stockKeys, width, height, isMonth, companyName]);
+  });
 
   return (
-    <div className="h-80 w-full" ref={parentRef}>
-      <svg width="100%" height="100%">
-        <g
-          className={`chart-group-${companyName}`}
-          style={{ transform: "translate(0,10)" }}
-        ></g>
+    <div className="h-80 w-full" ref={parentRef} id="chart-container">
+      <svg width="100%" height="100%" id={`chart-svg-${companyName}`}>
+        <defs>
+          <clipPath id={`clip-${companyName}`}>
+            <rect x={0} y={0} width="100%" height="100%"></rect>
+          </clipPath>
+        </defs>
+        <g className={`chart-group-${companyName}`}></g>
         <g id={`x-axis-${companyName}`}></g>
       </svg>
     </div>
