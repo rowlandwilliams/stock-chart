@@ -51,6 +51,7 @@ export const drawLines = (
     .attr("transform", `translate(0, ${-margin})`)
     .attr("fill", "none")
     .attr("stroke", (d, i) => supernovaColors[i])
+    .attr("stroke-width", "1.5px")
     .transition()
     .duration(1000)
     .attr("d", (d) => plotLine(d.values));

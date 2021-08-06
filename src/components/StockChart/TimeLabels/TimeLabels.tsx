@@ -20,7 +20,7 @@ export const TimeLabels = ({
             {
               "bg-bar_colour text-white":
                 activeTimeLabelObject.label === labelObject.label,
-              "text-bar_colour text-opacity-20":
+              "text-bar_colour text-opacity-20  hover:bg-bar_colour hover:bg-opacity-20 hover:text-chart_background":
                 activeTimeLabelObject.label !== labelObject.label,
             }
           )}
