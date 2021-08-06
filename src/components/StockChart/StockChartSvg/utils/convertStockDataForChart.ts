@@ -1,15 +1,13 @@
 import { StockValue, StockData, ConvertedData } from "../../../../types";
+import { stockKeys } from "./chart-utils";
 
-export const convertStockDataForChart = (
-  stockData: StockData[],
-  keys: string[]
-) => {
+export const convertStockDataForChart = (stockData: StockData[]) => {
   // wide format to long format
   // convert from [{date: ..., close: ..., ....}, {date: ..., close: ..., ....}....] to
   // [close: [{date: ..., value: ....}, {date: ..., value: ....}...], open: [{date: ..., value: ....}, {date: ..., value: ....}......]
   const convertedData = [] as ConvertedData[];
 
-  keys.forEach((key) => {
+  stockKeys.forEach((key) => {
     const stockKeyData = [] as StockValue[];
 
     stockData.map((stockObj: StockData) => {

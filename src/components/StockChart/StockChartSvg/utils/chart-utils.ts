@@ -1,6 +1,8 @@
 import * as d3 from "d3";
 import { StockData, TimeLabel } from "../../../../types";
 
+// required keys for plotting lines
+export const stockKeys = ["open", "high", "low", "close", "adjClose"];
 export const margin = 20;
 
 // calculate min and max date in data for x axis
@@ -28,7 +30,6 @@ export const getDatesDomain = (
 // calculate min and max stock value
 export const getMinMaxStock = (
   stockValues: StockData[],
-  stockKeys: string[],
   latestDate: number,
   activeTimeLabelObject: TimeLabel
 ) => {

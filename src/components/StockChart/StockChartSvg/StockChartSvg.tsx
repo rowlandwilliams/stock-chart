@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { convertStockDataForChart } from "./utils/convertStockDataForChart";
-import { StockData, StockKey, TimeLabel } from "../../../types";
+import { StockData, TimeLabel } from "../../../types";
 import {
   margin,
   getAxisLabels,
@@ -13,14 +13,13 @@ import { drawLines } from "./utils/drawLines";
 
 interface Props {
   stockData: StockData[];
-  stockKeys: StockKey[];
   activeTimeLabelObject: TimeLabel;
   companyName: string;
 }
 
 export const StockChartSvg = ({
   stockData,
-  stockKeys,
+
   activeTimeLabelObject,
   companyName,
 }: Props) => {
@@ -32,7 +31,7 @@ export const StockChartSvg = ({
   const [height, setHeight] = useState(0);
 
   // convert data to required format
-  const convertedData = convertStockDataForChart(stockData, stockKeys);
+  const convertedData = convertStockDataForChart(stockData);
 
   // on page load set svg height
   useEffect(() => {
@@ -69,7 +68,6 @@ export const StockChartSvg = ({
       // calculate stocks domain for y axis scaling
       const stocksDomain = getMinMaxStock(
         stockData,
-        stockKeys,
         latestDate,
         activeTimeLabelObject
       );
