@@ -10,6 +10,8 @@ interface Props {
 }
 
 export const StockChart = ({ companyName }: Props) => {
+  const [chartIsHovered, setChartIsHovered] = useState(false);
+
   // define company data based on provided company name
   const stockData = companyStockData[companyName].map((stockObj) => ({
     ...stockObj,
@@ -25,8 +27,13 @@ export const StockChart = ({ companyName }: Props) => {
     return setActiveTimeLabelObject(labelObject);
   };
 
+  console.log(chartIsHovered);
   return (
-    <div className="block mx-auto max-w-4xl h-96 p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg">
+    <div
+      className="block mx-auto max-w-4xl h-96 p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
+      onMouseEnter={() => setChartIsHovered(true)}
+      onMouseLeave={() => setChartIsHovered(false)}
+    >
       <div className="flex justify-between">
         <div>
           {companyName.charAt(0).toUpperCase() +
@@ -41,6 +48,7 @@ export const StockChart = ({ companyName }: Props) => {
         stockData={stockData}
         activeTimeLabelObject={activeTimeLabelObject}
         companyName={companyName}
+        chartIsHovered={chartIsHovered}
       />
     </div>
   );

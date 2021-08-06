@@ -4,6 +4,8 @@ import { ConvertedData, StockValue } from "../../../../types";
 const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#A0FCAD", "#E0D9FE"];
 
 export const drawLines = (
+  xAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  yAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   companyName: string,
   x: d3.ScaleTime<number, number, never>,
   y: d3.ScaleLinear<number, number, never>,
@@ -16,15 +18,6 @@ export const drawLines = (
   convertedData: ConvertedData[],
   margin: number
 ) => {
-  // select x axis g
-  const xAxisGroup = d3.select<SVGSVGElement, unknown>(
-    `#x-axis-${companyName}`
-  );
-
-  const yAxisGroup = d3.select<SVGSVGElement, unknown>(
-    `#y-axis-${companyName}`
-  );
-
   // select lines g
   const linesGroup = d3.select(`.chart-group-${companyName}`);
 
@@ -57,6 +50,7 @@ export const drawLines = (
     .on("start", () => {
       yAxisGroup.select(".domain").remove(); // remove axis line
     });
+
   // add lines
   linesGroup
     .selectAll("path")

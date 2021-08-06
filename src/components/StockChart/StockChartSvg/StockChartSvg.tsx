@@ -10,18 +10,20 @@ import {
   xAxisScale,
 } from "./utils/chart-utils";
 import { drawLines } from "./utils/drawLines";
+import classNames from "classnames";
 
 interface Props {
   stockData: StockData[];
   activeTimeLabelObject: TimeLabel;
   companyName: string;
+  chartIsHovered: boolean;
 }
 
 export const StockChartSvg = ({
   stockData,
-
   activeTimeLabelObject,
   companyName,
+  chartIsHovered,
 }: Props) => {
   // define ref for parent container
   const parentRef = useRef<HTMLInputElement>(null);
@@ -55,6 +57,14 @@ export const StockChartSvg = ({
   useEffect(() => {
     // prevent svg being loaded until parent width has been set
     if (width > 0) {
+      const xAxisGroup = d3.select<SVGSVGElement, unknown>(
+        `#x-axis-${companyName}`
+      );
+
+      const yAxisGroup = d3.select<SVGSVGElement, unknown>(
+        `#y-axis-${companyName}`
+      );
+
       // determine latest date
       const latestDate = stockData.slice(-1)[0].date;
 
@@ -85,6 +95,8 @@ export const StockChartSvg = ({
 
       // draw lines
       drawLines(
+        xAxisGroup,
+        yAxisGroup,
         companyName,
         x,
         y,
@@ -103,14 +115,25 @@ export const StockChartSvg = ({
   return (
     <div className="h-80 w-full" ref={parentRef} id="chart-container">
       <svg width="100%" height="100%" id={`chart-svg-${companyName}`}>
-        <defs>
-          <clipPath id={`clip-${companyName}`}>
-            <rect x={0} y={0} width="100%" height="100%"></rect>
-          </clipPath>
-        </defs>
-        <g id={`x-axis-${companyName}`}></g>
+        <g
+          id={`x-axis-${companyName}`}
+          className={classNames(
+            "text-white text-opacity-50 transition duration-500",
+            {
+              "opacity-1": chartIsHovered,
+              "opacity-0": !chartIsHovered,
+            }
+          )}
+        ></g>
         <g id={`y-axis-${companyName}`}></g>
         <g className={`chart-group-${companyName}`}></g>
+        <rect
+          width="100%"
+          height="100%"
+          id={`overlay-${companyName}`}
+          pointerEvents="all"
+          fill="none"
+        ></rect>
       </svg>
     </div>
   );

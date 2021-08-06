@@ -25,7 +25,6 @@ export const TimeLabels = ({
             }
           )}
           onClick={() => onTimeLabelClick(labelObject)}
-          id="suh"
         >
           {labelObject.label}
         </div>
