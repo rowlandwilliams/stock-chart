@@ -12,12 +12,17 @@ export const drawLines = (
   width: number,
   height: number,
   xAxis: d3.Axis<d3.NumberValue | Date>,
+  yAxis: d3.Axis<d3.NumberValue>,
   convertedData: ConvertedData[],
   margin: number
 ) => {
   // select x axis g
   const xAxisGroup = d3.select<SVGSVGElement, unknown>(
     `#x-axis-${companyName}`
+  );
+
+  const yAxisGroup = d3.select<SVGSVGElement, unknown>(
+    `#y-axis-${companyName}`
   );
 
   // select lines g
@@ -43,6 +48,15 @@ export const drawLines = (
       xAxisGroup.select(".domain").remove(); // remove axis line
     });
 
+  yAxisGroup
+    .attr("transform", `translate(0, ${0})`)
+    .attr("opacity", "0.1")
+    .transition()
+    .duration(1000)
+    .call(yAxis)
+    .on("start", () => {
+      yAxisGroup.select(".domain").remove(); // remove axis line
+    });
   // add lines
   linesGroup
     .selectAll("path")

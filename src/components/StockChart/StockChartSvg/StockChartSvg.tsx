@@ -78,6 +78,7 @@ export const StockChartSvg = ({
 
       // define x axis
       const xAxis = d3.axisBottom(x).tickSize(0);
+      const yAxis = d3.axisLeft(y).tickSize(-width).ticks(4);
 
       // determine the number of axis labels to plot based on activeTimeLabel
       getAxisLabels(activeTimeLabelObject, xAxis);
@@ -92,6 +93,7 @@ export const StockChartSvg = ({
         width,
         height,
         xAxis,
+        yAxis,
         convertedData,
         margin
       );
@@ -106,8 +108,9 @@ export const StockChartSvg = ({
             <rect x={0} y={0} width="100%" height="100%"></rect>
           </clipPath>
         </defs>
-        <g className={`chart-group-${companyName}`}></g>
         <g id={`x-axis-${companyName}`}></g>
+        <g id={`y-axis-${companyName}`}></g>
+        <g className={`chart-group-${companyName}`}></g>
       </svg>
     </div>
   );
