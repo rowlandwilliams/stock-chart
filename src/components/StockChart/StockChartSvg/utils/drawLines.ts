@@ -37,6 +37,7 @@ export const drawLines = (
     .transition()
     .duration(1000)
     .call(xAxis)
+    .attr("text-anchor", "end")
     .on("start", () => {
       xAxisGroup.select(".domain").remove(); // remove axis line
     });
