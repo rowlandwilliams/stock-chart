@@ -113,6 +113,14 @@ export const StockChartSvg = ({
     }
   });
 
+  const getClassFromChartHover = classNames(
+    "text-white text-opacity-50 transition duration-150",
+    {
+      "opacity-1": chartIsHovered,
+      "opacity-0": !chartIsHovered,
+    }
+  );
+
   return (
     <div className="h-80 w-full" ref={parentRef} id="chart-container">
       <svg
@@ -121,28 +129,10 @@ export const StockChartSvg = ({
         id={`chart-svg-${companyName}`}
         pointerEvents="all"
       >
-        <g
-          id={`x-axis-${companyName}`}
-          className={classNames(
-            "text-white text-opacity-50 transition duration-150",
-            {
-              "opacity-1": chartIsHovered,
-              "opacity-0": !chartIsHovered,
-            }
-          )}
-        ></g>
+        <g id={`x-axis-${companyName}`} className={getClassFromChartHover}></g>
         <g id={`y-axis-${companyName}`}></g>
         <g id={`chart-group-${companyName}`}></g>
-        <g
-          id={`focus-${companyName}`}
-          className={classNames(
-            "text-white text-opacity-50 transition duration-150",
-            {
-              "opacity-1": chartIsHovered,
-              "opacity-0": !chartIsHovered,
-            }
-          )}
-        >
+        <g id={`focus-${companyName}`} className={getClassFromChartHover}>
           <line></line>
         </g>
         <rect

@@ -27,10 +27,17 @@ export const drawLines = (
     `#chart-svg-${companyName}`
   );
 
-  const focusGroup = d3.select<SVGSVGElement, unknown>(
+  const focusGroup = d3.select<SVGSVGElement, unknown>(`#focus-${companyName}`);
+
+  const focusLine = d3.select<SVGSVGElement, unknown>(
     `#focus-${companyName} > line`
   );
 
+  const focusCircles = d3.selectAll<SVGSVGElement, unknown>(
+    `#focus-${companyName} > circle`
+  );
+
+  focusCircles.attr("stroke", "#1a1b3e").attr("stroke-width", 2);
   // define line plotting function based on x and y scales
   const plotLine = d3
     .line<StockValue>()
@@ -75,7 +82,8 @@ export const drawLines = (
     .duration(1000)
     .attr("d", (d) => plotLine(d.values));
 
-  focusGroup
+  focusLine
+    .select("line")
     .style("stroke", "white")
     .attr("stroke-width", 1)
     .style("shape-rendering", "crispEdges")
@@ -83,12 +91,19 @@ export const drawLines = (
     .attr("y1", 0)
     .attr("y2", height);
 
+  focusCircles
+    .selectAll("circle")
+    .data(convertedData)
+    .join("circle")
+    .attr("r", "4")
+    .attr("fill", (d, i) => supernovaColors[i]);
+
   svgGroup
     .on("mouseenter", () => {
-      focusGroup.attr("stroke-opacity", 1);
+      focusGroup.attr("stroke-opacity", 1).attr("opacity", 1);
     })
     .on("mouseleave", () => {
-      focusGroup.attr("stroke-opacity", 0);
+      focusGroup.attr("stroke-opacity", 0).attr("opacity", 0);
     })
-    .on("mousemove", (event) => mousemove(event, x, dates, focusGroup));
+    .on("mousemove", (event) => mousemove(event, x, y, dates, focusGroup));
 };

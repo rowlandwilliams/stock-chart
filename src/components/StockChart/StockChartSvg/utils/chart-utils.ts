@@ -70,6 +70,7 @@ export const getAxisLabels = (
 export const mousemove = (
   event: PointerEvent,
   x: d3.ScaleTime<number, number, never>,
+  y: d3.ScaleLinear<number, number, never>,
   dates: number[],
   focusGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
 ) => {
@@ -84,6 +85,14 @@ export const mousemove = (
   const d1 = dates[i];
 
   const d = x0 - d0 > d1 - x0 ? d1 : d0;
+  const idx = x0 - d0 > d1 - x0 ? i : i - 1;
 
-  focusGroup.attr("transform", "translate(" + x(d) + "," + 0 + ")");
+  focusGroup
+    .select("line")
+    .attr("transform", "translate(" + x(d) + "," + 0 + ")");
+
+  focusGroup
+    .selectAll("circle")
+    .attr("cx", x(d))
+    .attr("cy", (d: any) => y(d.values[idx].value) - margin);
 };
