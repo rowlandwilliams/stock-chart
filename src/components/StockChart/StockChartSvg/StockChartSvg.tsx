@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { convertStockDataForChart } from "./utils/convertStockDataForChart";
-import { StockData, TimeLabel } from "../../../types";
+import { ConvertedData, StockData, TimeLabel } from "../../../types";
 import {
   margin,
   getAxisLabels,
@@ -65,6 +65,10 @@ export const StockChartSvg = ({
         `#y-axis-${companyName}`
       );
 
+      const focusGroup = d3.select<SVGSVGElement, ConvertedData>(
+        `#focus-${companyName}`
+      );
+
       // determine latest date
       const latestDate = stockData.slice(-1)[0].date;
 
@@ -108,31 +112,38 @@ export const StockChartSvg = ({
         yAxis,
         convertedData,
         margin,
-        stockData.map((x) => x.date)
+        stockData.map((x) => x.date),
+        focusGroup
       );
     }
   });
 
-  const getClassFromChartHover = classNames(
-    "text-white text-opacity-50 transition duration-150",
-    {
-      "opacity-1": chartIsHovered,
-      "opacity-0": !chartIsHovered,
-    }
-  );
+  const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
+    classNames("text-white text-opacity-50 transition duration-150", {
+      "opacity-1":
+        chartIsHovered || (controlLineOpacityOnHover && !chartIsHovered),
+      "opacity-80": chartIsHovered && controlLineOpacityOnHover,
+      "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
+    });
 
   return (
-    <div className="h-80 w-full" ref={parentRef} id="chart-container">
+    <div className="relative h-96 w-full " ref={parentRef} id="chart-container">
       <svg
         width="100%"
         height="100%"
         id={`chart-svg-${companyName}`}
         pointerEvents="all"
       >
-        <g id={`x-axis-${companyName}`} className={getClassFromChartHover}></g>
+        <g
+          id={`x-axis-${companyName}`}
+          className={getClassFromChartHover()}
+        ></g>
         <g id={`y-axis-${companyName}`}></g>
-        <g id={`chart-group-${companyName}`}></g>
-        <g id={`focus-${companyName}`} className={getClassFromChartHover}>
+        <g
+          id={`chart-group-${companyName}`}
+          className={getClassFromChartHover(true)}
+        ></g>
+        <g id={`focus-${companyName}`} className={getClassFromChartHover()}>
           <line></line>
         </g>
         <rect

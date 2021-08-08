@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
-import { mousemove } from "./chart-utils";
+import { mousemove, supernovaColors } from "./chart-utils";
 
-const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#A0FCAD", "#E0D9FE"];
+const chartBackgroundColor = "#1a1b3e";
 
 export const drawLines = (
   xAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
@@ -18,7 +18,8 @@ export const drawLines = (
   yAxis: d3.Axis<d3.NumberValue>,
   convertedData: ConvertedData[],
   margin: number,
-  dates: number[]
+  dates: number[],
+  focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>
 ) => {
   // select lines g
   const linesGroup = d3.select(`#chart-group-${companyName}`);
@@ -27,17 +28,14 @@ export const drawLines = (
     `#chart-svg-${companyName}`
   );
 
-  const focusGroup = d3.select<SVGSVGElement, unknown>(`#focus-${companyName}`);
+  const focusLine = focusGroup.select("line");
 
-  const focusLine = d3.select<SVGSVGElement, unknown>(
-    `#focus-${companyName} > line`
-  );
+  const focusCircles = focusGroup.selectAll("circle");
 
-  const focusCircles = d3.selectAll<SVGSVGElement, unknown>(
-    `#focus-${companyName} > circle`
-  );
+  const focusText = focusGroup.selectAll("text");
 
-  focusCircles.attr("stroke", "#1a1b3e").attr("stroke-width", 2);
+  const focusTextRects = focusGroup.selectAll("rect");
+
   // define line plotting function based on x and y scales
   const plotLine = d3
     .line<StockValue>()
@@ -83,7 +81,6 @@ export const drawLines = (
     .attr("d", (d) => plotLine(d.values));
 
   focusLine
-    .select("line")
     .style("stroke", "white")
     .attr("stroke-width", 1)
     .style("shape-rendering", "crispEdges")
@@ -92,11 +89,20 @@ export const drawLines = (
     .attr("y2", height);
 
   focusCircles
-    .selectAll("circle")
     .data(convertedData)
     .join("circle")
     .attr("r", "4")
+    .attr("fill", (d, i) => supernovaColors[i])
+    .attr("stroke", chartBackgroundColor)
+    .attr("stroke-width", 2);
+
+  focusTextRects
+    .data(convertedData)
+    .join("rect")
+    .attr("height", "20px")
     .attr("fill", (d, i) => supernovaColors[i]);
+
+  focusText.data(convertedData).join("text").attr("fill", chartBackgroundColor);
 
   svgGroup
     .on("mouseenter", () => {
@@ -105,5 +111,7 @@ export const drawLines = (
     .on("mouseleave", () => {
       focusGroup.attr("stroke-opacity", 0).attr("opacity", 0);
     })
-    .on("mousemove", (event) => mousemove(event, x, y, dates, focusGroup));
+    .on("mousemove", (event) =>
+      mousemove(event, x, y, dates, datesDomain, focusGroup)
+    );
 };

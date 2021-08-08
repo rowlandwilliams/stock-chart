@@ -4,6 +4,7 @@ import { TimeLabel } from "../../types";
 import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 import { TimeLabels } from "./TimeLabels/TimeLabels";
 import { timeLabels } from "./data/timeLabels";
+import { capitalizeString } from "./StockChartSvg/utils/chart-utils";
 
 interface Props {
   companyName: string;
@@ -29,15 +30,12 @@ export const StockChart = ({ companyName }: Props) => {
 
   return (
     <div
-      className="block mx-auto max-w-4xl h-96 p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
+      className="block mx-auto max-w-4xl p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
       onMouseEnter={() => setChartIsHovered(true)}
       onMouseLeave={() => setChartIsHovered(false)}
     >
       <div className="flex justify-between">
-        <div>
-          {companyName.charAt(0).toUpperCase() +
-            companyName.toLowerCase().slice(1)}
-        </div>
+        <div>{capitalizeString(companyName)}</div>
         <TimeLabels
           activeTimeLabelObject={activeTimeLabelObject}
           onTimeLabelClick={handleTimeLabelClick}
