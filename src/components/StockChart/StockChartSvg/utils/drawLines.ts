@@ -59,10 +59,9 @@ export const drawLines = (
 
   yAxisGroup
     .attr("transform", `translate(0, ${0})`)
-    .attr("opacity", "0.1")
     .transition()
     .duration(1000)
-    .call(yAxis)
+    .call(yAxis.ticks(4))
     .on("start", () => {
       yAxisGroup.select(".domain").remove(); // remove axis line
     });

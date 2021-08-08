@@ -32,6 +32,21 @@ export const getAxisLabels = (
   return xAxis.ticks(d3.timeMonth.every(1));
 };
 
+export const getYAxisLabels = (
+  activeTimeLabelObject: TimeLabel,
+  yAxis: d3.Axis<d3.NumberValue>
+) => {
+  if (activeTimeLabelObject.label === "1W") {
+    return yAxis.ticks(4);
+  }
+
+  if (activeTimeLabelObject.label === "1M") {
+    return yAxis.ticks(2);
+  }
+
+  return yAxis.ticks(5);
+};
+
 // mousmove function for when svg is hovered
 export const mousemove = (
   event: PointerEvent,
@@ -75,8 +90,7 @@ export const mousemove = (
   const idxFinal = x0 - d0 > d1 - x0 ? idx : idx - 1;
 
   // translate line based on current x value
-  focusLine
-    .attr("transform", "translate(" + x(dFinal) + "," + 0 + ")");
+  focusLine.attr("transform", "translate(" + x(dFinal) + "," + 0 + ")");
 
   // translate circle based on current x and y value
   focusCircles
