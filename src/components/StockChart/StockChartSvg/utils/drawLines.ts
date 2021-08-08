@@ -109,6 +109,16 @@ export const drawLines = (
       focusGroup.attr("stroke-opacity", 0).attr("opacity", 0);
     })
     .on("mousemove", (event) =>
-      mousemove(event, x, y, dates, datesDomain, focusGroup, width)
+      mousemove(
+        event,
+        x,
+        y,
+        dates,
+        focusLine,
+        focusCircles,
+        focusText,
+        focusTextRects,
+        width
+      )
     );
 };

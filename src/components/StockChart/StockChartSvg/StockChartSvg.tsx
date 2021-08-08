@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { convertStockDataForChart } from "./utils/convertStockDataForChart";
-import { ConvertedData, StockData, TimeLabel } from "../../../types";
 import {
-  margin,
-  getAxisLabels,
+  convertStockDataForChart,
   getDatesDomain,
   getMinMaxStock,
-  xAxisScale,
-} from "./utils/chart-utils";
+} from "./utils/data-utils";
+import { ConvertedData, StockData, TimeLabel } from "../../../types";
+import { margin, getAxisLabels, xAxisScale } from "./utils/chart-utils";
 import { drawLines } from "./utils/drawLines";
 import classNames from "classnames";
 

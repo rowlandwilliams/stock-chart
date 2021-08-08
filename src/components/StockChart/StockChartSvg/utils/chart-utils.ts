@@ -1,7 +1,5 @@
-import { Console } from "console";
 import * as d3 from "d3";
-import { max, text } from "d3";
-import { ConvertedData, StockData, TimeLabel } from "../../../../types";
+import { ConvertedData, TimeLabel } from "../../../../types";
 
 // required keys for plotting lines
 export const stockKeys = ["open", "high", "low", "close"];
@@ -11,46 +9,6 @@ export const margin = 20;
 
 export const capitalizeString = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-};
-
-// calculate min and max date in data for x axis
-export const getDatesDomain = (
-  stockData: StockData[],
-  latestDate: number,
-  activeTimeLabelObject: TimeLabel
-) => {
-  const dates = stockData.map((x) => x.date);
-
-  return [
-    Math.min(
-      ...dates.filter(
-        (date) => date > latestDate - activeTimeLabelObject.timescale
-      )
-    ),
-    Math.max(
-      ...dates.filter(
-        (date) => date > latestDate - activeTimeLabelObject.timescale
-      )
-    ),
-  ];
-};
-
-// calculate min and max stock value
-export const getMinMaxStock = (
-  stockValues: StockData[],
-  latestDate: number,
-  activeTimeLabelObject: TimeLabel
-) => {
-  // filter stockData based on clicked timescale
-  const data: number[] = stockValues
-    .filter(
-      (stockObj) => stockObj.date > latestDate - activeTimeLabelObject.timescale
-    )
-    .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
-    .flat();
-
-  // return min max of filtered data
-  return [Math.min.apply(null, data), Math.max.apply(null, data)];
 };
 
 // scaling function for x axis
@@ -80,111 +38,99 @@ export const mousemove = (
   x: d3.ScaleTime<number, number, never>,
   y: d3.ScaleLinear<number, number, never>,
   dates: number[],
-  datesDomain: number[],
-  focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>,
+  focusLine: d3.Selection<d3.BaseType, ConvertedData, HTMLElement, any>,
+  focusCircles: d3.Selection<
+    d3.BaseType,
+    unknown,
+    SVGSVGElement,
+    ConvertedData
+  >,
+  focusText: d3.Selection<d3.BaseType, unknown, SVGSVGElement, ConvertedData>,
+  focusTextRects: d3.Selection<
+    d3.BaseType,
+    unknown,
+    SVGSVGElement,
+    ConvertedData
+  >,
   width: number
 ) => {
+  // height of one label
   const textHeight = 20;
+
+  // get x mouse position
   const xMouse = d3.pointer(event)[0];
-  console.log(xMouse / width);
 
   // convert mouse coordinate to date based on x scale
   const x0 = x.invert(d3.pointer(event)[0]).getTime();
 
   // determine the index of the date in dates array that is closest to x0
-  const i = d3.bisect(dates, x0, 1);
+  const idx = d3.bisect(dates, x0, 1);
 
   // define dates one before and at index
-  const d0 = dates[i - 1];
-  const d1 = dates[i];
+  const d0 = dates[idx - 1];
+  const d1 = dates[idx];
 
   // determine date value that will be used to position x value of verticla line / tooltip
   const dFinal = x0 - d0 > d1 - x0 ? d1 : d0;
-  const idxFinal = x0 - d0 > d1 - x0 ? i : i - 1;
+  const idxFinal = x0 - d0 > d1 - x0 ? idx : idx - 1;
 
-  focusGroup
-    .select("line")
+  // translate line based on current x value
+  focusLine
     .attr("transform", "translate(" + x(dFinal) + "," + 0 + ")");
 
-  focusGroup
-    .selectAll("circle")
+  // translate circle based on current x and y value
+  focusCircles
     .attr("cx", x(dFinal))
     .attr("cy", (d: any) => y(d.values[idxFinal].value) - margin);
 
+  // for the given date get the value for each stockMetric
   const sequentialLineData: number[] = [];
 
-  focusGroup.selectAll("text").each((d: any) => {
+  // for each label grab data value associated with it and push to array
+  focusText.each((d: any) => {
     sequentialLineData.push(d.values[idxFinal].value);
   });
 
-  // sort in descneding order
+  // sort in descneding order (for y positioning)
   sequentialLineData.sort().reverse();
   const length = sequentialLineData.length;
 
-  // calulcate the mid of all four values for a given date
+  // calulcate the mid of all four values for a given date (for mid positioning of tooltip box)
   const midStockValue =
     sequentialLineData[length - 1] -
     (sequentialLineData[length - 1] - sequentialLineData[0]) / 2;
 
-  const getTextTranslationFromData = (d: any, i: number) => {
-    // distance between tooltip and point
-    const offset = 15;
-
-    // determine position of rectangle based on y value
-    const index = sequentialLineData.indexOf(d.values[idxFinal].value);
-
-    return (
-      "translate(" +
-      (x(dFinal) +
-        (xMouse > width - maxTextWidthAndOffset
-          ? -maxTextWidthAndOffset
-          : offset)) +
-      "," + // multiply index by textheight to determine vertical position of each label in tooltip
-      (y(midStockValue) + index * textHeight - margin - 25) +
-      ")"
-    );
-  };
-
-  const getRectTranslationFromData = (
-    d: any,
-    i: number,
-    maxTextWidthAndOffset: number
-  ) => {
-    return (
-      "translate(" +
-      (x(dFinal) +
-        (xMouse > width - maxTextWidthAndOffset
-          ? -maxTextWidthAndOffset - 5
-          : margin / 2) +
-        "," +
-        (y(midStockValue) + i * textHeight - margin - 2 * textHeight) +
-        ")")
-    );
-  };
-
   const textWidths: number[] = [];
 
-  focusGroup.selectAll("text").each((d, i, nodes) => {
+  focusText.each((d, i, nodes) => {
     const node = d3.select(nodes[i]).node() as SVGSVGElement;
     const width = node.getBBox().width;
     textWidths.push(width + 10);
   });
 
   const maxTextWidth = Math.max(...textWidths);
-  const maxTextWidthAndOffset = maxTextWidth + 15;
+  const maxTextWidthAndOffset = maxTextWidth + 5;
 
-  focusGroup
-    .select("rect")
+  focusTextRects
     .attr("rx", 2)
     .attr("fill", "#383862")
     .attr("width", maxTextWidth)
     .attr("height", "80px")
     .attr("transform", (d: any, i) =>
-      getRectTranslationFromData(d, i, maxTextWidthAndOffset)
+      getRectTranslationFromData(
+        x,
+        dFinal,
+        xMouse,
+        width,
+        maxTextWidthAndOffset,
+        y,
+        midStockValue,
+        i,
+        textHeight
+      )
     );
 
-  focusGroup
-    .selectAll("text")
+  focusText
     .text(
       (d: any) =>
         capitalizeString(d.stockMetric) +
@@ -192,6 +138,76 @@ export const mousemove = (
         d.values[idxFinal].value.toFixed(2)
     )
     .attr("font-size", "0.75rem")
-    .attr("transform", (d: any, i) => getTextTranslationFromData(d, i))
+    .attr("transform", (d: any, i) =>
+      getTextTranslationFromData(
+        sequentialLineData,
+        d,
+        idxFinal,
+        x,
+        xMouse,
+        width,
+        maxTextWidthAndOffset,
+        y,
+        midStockValue,
+        textHeight,
+        dFinal
+      )
+    )
     .attr("text-anchor", "start");
+};
+
+// translate text labels based on value at a given date
+const getTextTranslationFromData = (
+  sequentialLineData: number[],
+  d: any,
+  idxFinal: number,
+  x: d3.ScaleTime<number, number, never>,
+  xMouse: number,
+  width: number,
+  maxTextWidthAndOffset: number,
+  y: d3.ScaleLinear<number, number, never>,
+  midStockValue: number,
+  textHeight: number,
+  dFinal: number
+) => {
+  // distance between tooltip and point
+  const offset = 15;
+
+  // determine position of rectangle based on y value
+  const index = sequentialLineData.indexOf(d.values[idxFinal].value);
+
+  return (
+    "translate(" +
+    (x(dFinal) +
+      (xMouse > width - maxTextWidthAndOffset
+        ? -maxTextWidthAndOffset
+        : offset)) +
+    "," + // multiply index by textheight to determine vertical position of each label in tooltip
+    (y(midStockValue) + index * textHeight - margin - 25) +
+    ")"
+  );
+};
+
+// translate text rectablges based on value at a given date
+const getRectTranslationFromData = (
+  x: d3.ScaleTime<number, number, never>,
+  dFinal: number,
+  xMouse: number,
+  width: number,
+  maxTextWidthAndOffset: number,
+  y: d3.ScaleLinear<number, number, never>,
+  midStockValue: number,
+  i: number,
+  textHeight: number
+) => {
+  return (
+    "translate(" +
+    (x(dFinal) +
+      (xMouse > width - maxTextWidthAndOffset
+        ? -maxTextWidthAndOffset - 5
+        : margin / 2) +
+      "," +
+      (y(midStockValue) + i * textHeight - margin - 2 * textHeight) +
+      ")")
+  );
 };
