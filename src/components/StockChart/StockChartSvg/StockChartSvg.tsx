@@ -145,6 +145,7 @@ export const StockChartSvg = ({
         ></g>
         <g id={`focus-${companyName}`} className={getClassFromChartHover()}>
           <line></line>
+          <rect></rect>
         </g>
         <rect
           width="100%"

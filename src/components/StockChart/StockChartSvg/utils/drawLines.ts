@@ -96,13 +96,10 @@ export const drawLines = (
     .attr("stroke", chartBackgroundColor)
     .attr("stroke-width", 2);
 
-  focusTextRects
+  focusText
     .data(convertedData)
-    .join("rect")
-    .attr("height", "20px")
+    .join("text")
     .attr("fill", (d, i) => supernovaColors[i]);
-
-  focusText.data(convertedData).join("text").attr("fill", chartBackgroundColor);
 
   svgGroup
     .on("mouseenter", () => {
@@ -112,6 +109,6 @@ export const drawLines = (
       focusGroup.attr("stroke-opacity", 0).attr("opacity", 0);
     })
     .on("mousemove", (event) =>
-      mousemove(event, x, y, dates, datesDomain, focusGroup)
+      mousemove(event, x, y, dates, datesDomain, focusGroup, width)
     );
 };

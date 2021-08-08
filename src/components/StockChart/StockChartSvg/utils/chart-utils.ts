@@ -1,4 +1,6 @@
+import { Console } from "console";
 import * as d3 from "d3";
+import { max, text } from "d3";
 import { ConvertedData, StockData, TimeLabel } from "../../../../types";
 
 // required keys for plotting lines
@@ -79,8 +81,13 @@ export const mousemove = (
   y: d3.ScaleLinear<number, number, never>,
   dates: number[],
   datesDomain: number[],
-  focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>
+  focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>,
+  width: number
 ) => {
+  const textHeight = 20;
+  const xMouse = d3.pointer(event)[0];
+  console.log(xMouse / width);
+
   // convert mouse coordinate to date based on x scale
   const x0 = x.invert(d3.pointer(event)[0]).getTime();
 
@@ -91,9 +98,9 @@ export const mousemove = (
   const d0 = dates[i - 1];
   const d1 = dates[i];
 
+  // determine date value that will be used to position x value of verticla line / tooltip
   const dFinal = x0 - d0 > d1 - x0 ? d1 : d0;
-  const idx = x0 - d0 > d1 - x0 ? i : i - 1;
-  console.log(dFinal, datesDomain);
+  const idxFinal = x0 - d0 > d1 - x0 ? i : i - 1;
 
   focusGroup
     .select("line")
@@ -102,37 +109,56 @@ export const mousemove = (
   focusGroup
     .selectAll("circle")
     .attr("cx", x(dFinal))
-    .attr("cy", (d: any) => y(d.values[idx].value) - margin);
+    .attr("cy", (d: any) => y(d.values[idxFinal].value) - margin);
 
   const sequentialLineData: number[] = [];
 
-  focusGroup
-    .selectAll("text")
-    .each((d: any) => sequentialLineData.push(d.values[idx].value));
+  focusGroup.selectAll("text").each((d: any) => {
+    sequentialLineData.push(d.values[idxFinal].value);
+  });
 
-  const getTranslationFromData = (d: any) => {
-    const index = sequentialLineData.sort().indexOf(d.values[idx].value);
+  // sort in descneding order
+  sequentialLineData.sort().reverse();
+  const length = sequentialLineData.length;
+
+  // calulcate the mid of all four values for a given date
+  const midStockValue =
+    sequentialLineData[length - 1] -
+    (sequentialLineData[length - 1] - sequentialLineData[0]) / 2;
+
+  const getTextTranslationFromData = (d: any, i: number) => {
+    // distance between tooltip and point
     const offset = 15;
+
+    // determine position of rectangle based on y value
+    const index = sequentialLineData.indexOf(d.values[idxFinal].value);
 
     return (
       "translate(" +
-      (x(dFinal) + (index % 2 !== 0 ? -offset : offset)) +
-      "," +
-      (y(d.values[idx].value) - margin * 0.8) +
+      (x(dFinal) +
+        (xMouse > width - maxTextWidthAndOffset
+          ? -maxTextWidthAndOffset
+          : offset)) +
+      "," + // multiply index by textheight to determine vertical position of each label in tooltip
+      (y(midStockValue) + index * textHeight - margin - 25) +
       ")"
     );
   };
 
-  const getRectTranslationFromData = (d: any, rectWidth: number) => {
-    const index = sequentialLineData.sort().indexOf(d.values[idx].value);
-    const offset = rectWidth + 10;
-
+  const getRectTranslationFromData = (
+    d: any,
+    i: number,
+    maxTextWidthAndOffset: number
+  ) => {
     return (
       "translate(" +
-      (x(dFinal) + (index % 2 !== 0 ? -offset : margin / 2)) +
-      "," +
-      (y(d.values[idx].value) - margin * 1.5) +
-      ")"
+      (x(dFinal) +
+        (xMouse > width - maxTextWidthAndOffset
+          ? -maxTextWidthAndOffset - 5
+          : margin / 2) +
+        "," +
+        (y(midStockValue) + i * textHeight - margin - 2 * textHeight) +
+        ")")
     );
   };
 
@@ -144,25 +170,28 @@ export const mousemove = (
     textWidths.push(width + 10);
   });
 
+  const maxTextWidth = Math.max(...textWidths);
+  const maxTextWidthAndOffset = maxTextWidth + 15;
+
   focusGroup
-    .selectAll("rect")
+    .select("rect")
     .attr("rx", 2)
-    .attr("width", (d, i) => textWidths[i])
+    .attr("fill", "#383862")
+    .attr("width", maxTextWidth)
+    .attr("height", "80px")
     .attr("transform", (d: any, i) =>
-      getRectTranslationFromData(d, textWidths[i])
+      getRectTranslationFromData(d, i, maxTextWidthAndOffset)
     );
 
   focusGroup
     .selectAll("text")
     .text(
       (d: any) =>
-        capitalizeString(d.stockMetric) + ": " + d.values[idx].value.toFixed(2)
+        capitalizeString(d.stockMetric) +
+        ": " +
+        d.values[idxFinal].value.toFixed(2)
     )
     .attr("font-size", "0.75rem")
-    .attr("transform", (d: any) => getTranslationFromData(d))
-    .attr("text-anchor", (d: any) =>
-      sequentialLineData.sort().indexOf(d.values[idx].value) % 2 !== 0
-        ? "end"
-        : "start"
-    );
+    .attr("transform", (d: any, i) => getTextTranslationFromData(d, i))
+    .attr("text-anchor", "start");
 };
