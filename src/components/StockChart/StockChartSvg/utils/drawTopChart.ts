@@ -1,6 +1,11 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
-import { mousemove, supernovaColors, topChartHeight } from "./chart-utils";
+import {
+  mousemove,
+  stockKeys,
+  supernovaColors,
+  topChartHeight,
+} from "./chart-utils";
 
 const chartBackgroundColor = "#1a1b3e";
 
@@ -21,6 +26,8 @@ export const drawTopChart = (
   focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>
 ) => {
   // select lines g
+  const areaGroup = d3.select(`#area-${companyName}`);
+
   const linesGroup = d3.select(`#lines-${companyName}`);
 
   const svgGroup = d3.select<SVGSVGElement, unknown>(
@@ -40,6 +47,12 @@ export const drawTopChart = (
     .line<StockValue>()
     .x((d) => x(d.date))
     .y((d) => y(d.value));
+
+  const plotArea = d3
+    .area<StockValue>()
+    .x((d) => x(d.date))
+    .y0(topChartHeight - margin)
+    .y1((d) => y(d.value));
 
   // set axes domains
   x.domain(datesDomain).range([0, width]);
@@ -70,13 +83,25 @@ export const drawTopChart = (
     .attr("text-anchor", "start");
 
   // add lines
+  areaGroup
+    .selectAll("path")
+    .data(convertedData)
+    .join("path")
+    // .attr("opacity", 0.3)
+    .attr("fill", (d, i) => `url(#${stockKeys[i]})`)
+    // .attr("stroke", (d, i) => supernovaColors[i])
+    .attr("stroke-width", 0)
+    .transition()
+    .duration(800)
+    .attr("d", (d) => plotArea(d.values));
+
   linesGroup
     .selectAll("path")
     .data(convertedData)
     .join("path")
     .attr("fill", "none")
     .attr("stroke", (d, i) => supernovaColors[i])
-    .attr("stroke-width", "1.5px")
+    .attr("stroke-width", "2px")
     .transition()
     .duration(800)
     .attr("d", (d) => plotLine(d.values));

@@ -9,8 +9,13 @@ export const topChartHeight = 350;
 export const bottomChartHeight = 130;
 
 // required keys for plotting lines
-export const stockKeys = ["open", "high", "low", "close"];
-export const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#E0D9FE"];
+export const stockKeys = ["high", "close", "open", "low"];
+export const supernovaColors = [
+  "#FF715B",
+  "#E9FEA5",
+  "#E0D9FE",
+  "#52a866",
+].reverse();
 
 export const capitalizeString = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

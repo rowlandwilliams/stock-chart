@@ -14,10 +14,13 @@ import {
   xAxisScale,
   topChartHeight,
   svgHeight,
+  stockKeys,
+  supernovaColors,
 } from "./utils/chart-utils";
 import { drawTopChart } from "./utils/drawTopChart";
 import classNames from "classnames";
 import { drawBottomChart } from "./utils/drawBottomChart";
+import { LinearGradient } from "./LinearGradient/LinearGradient";
 
 interface Props {
   stockData: StockData[];
@@ -148,6 +151,7 @@ export const StockChartSvg = ({
       "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
     });
 
+  console.log(stockData);
   return (
     <div className="w-full" ref={parentRef} id="chart-container">
       <svg
@@ -156,6 +160,14 @@ export const StockChartSvg = ({
         id={`chart-svg-${companyName}`}
         pointerEvents="all"
       >
+        <defs>
+          {stockKeys.map((stockKey, i) => (
+            <LinearGradient
+              gradientId={stockKey}
+              gradientColor={supernovaColors[i]}
+            />
+          ))}
+        </defs>
         <g
           id={`top-chart-group-${companyName}`}
           height={topChartHeight}
@@ -168,6 +180,10 @@ export const StockChartSvg = ({
           <g
             id={`y-axis-${companyName}`}
             className={getClassFromChartHover()}
+          ></g>
+          <g
+            id={`area-${companyName}`}
+            className={getClassFromChartHover(true)}
           ></g>
           <g
             id={`lines-${companyName}`}

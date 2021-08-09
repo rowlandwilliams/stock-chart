@@ -16,7 +16,7 @@ export const TimeLabels = ({
       {timeLabels.map((labelObject) => (
         <div
           className={classNames(
-            "ml-2 px-2 rounded-lg bg-opacity-20 cursor-pointer",
+            "w-10 ml-2 text-center rounded-lg bg-opacity-20 cursor-pointer",
             {
               "bg-bar_colour text-white":
                 activeTimeLabelObject.label === labelObject.label,

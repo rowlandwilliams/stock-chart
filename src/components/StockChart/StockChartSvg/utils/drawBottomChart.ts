@@ -26,7 +26,7 @@ export const drawBottomChart = (
 
   var brush = d3Brush.brushX().extent([
     [0, 0],
-    [width, bottomChartHeight],
+    [width, bottomChartHeight - margin],
   ]);
   // .on("brush end", brushed);
 
