@@ -50,7 +50,7 @@ export const drawLines = (
   xAxisGroup
     .attr("transform", `translate(0, ${height})`)
     .transition()
-    .duration(1000)
+    .duration(800)
     .call(xAxis)
     .attr("text-anchor", "end")
     .on("start", () => {
@@ -60,11 +60,18 @@ export const drawLines = (
   yAxisGroup
     .attr("transform", `translate(0, ${0})`)
     .transition()
-    .duration(1000)
-    .call(yAxis.ticks(4))
+    .duration(800)
+    .call(yAxis)
     .on("start", () => {
       yAxisGroup.select(".domain").remove(); // remove axis line
-    });
+      yAxisGroup
+        .selectAll(".tick > line")
+        .attr("opacity", 0.5)
+        .style("stroke-dasharray", "5 5");
+    })
+    .selectAll("text")
+    .attr("transform", "translate(4, -8)")
+    .attr("text-anchor", "start");
 
   // add lines
   linesGroup
@@ -76,7 +83,7 @@ export const drawLines = (
     .attr("stroke", (d, i) => supernovaColors[i])
     .attr("stroke-width", "1.5px")
     .transition()
-    .duration(1000)
+    .duration(800)
     .attr("d", (d) => plotLine(d.values));
 
   focusLine

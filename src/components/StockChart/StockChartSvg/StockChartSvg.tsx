@@ -6,12 +6,7 @@ import {
   getMinMaxStock,
 } from "./utils/data-utils";
 import { ConvertedData, StockData, TimeLabel } from "../../../types";
-import {
-  margin,
-  getAxisLabels,
-  xAxisScale,
-  getYAxisLabels,
-} from "./utils/chart-utils";
+import { margin, getAxisLabels, xAxisScale } from "./utils/chart-utils";
 import { drawLines } from "./utils/drawLines";
 import classNames from "classnames";
 
@@ -28,7 +23,6 @@ export const StockChartSvg = ({
   companyName,
   chartIsHovered,
 }: Props) => {
-  console.log("heere", chartIsHovered);
   // define ref for parent container
   const parentRef = useRef<HTMLInputElement>(null);
 
@@ -96,15 +90,9 @@ export const StockChartSvg = ({
 
       // define x axis
       const xAxis = d3.axisBottom(x).tickSize(0);
-      const yAxis = d3.axisLeft(y);
-      yAxisGroup
-        .selectAll("text")
-        .attr("transform", "translate(4, -8)")
-        .attr("text-anchor", "start");
+      const yAxis = d3.axisLeft(y).tickSize(-width).ticks(4);
 
-      
       getAxisLabels(activeTimeLabelObject, xAxis);
-      // getYAxisLabels(activeTimeLabelObject, yAxis);
 
       // draw lines
       drawLines(
