@@ -29,6 +29,10 @@ export const getAxisLabels = (
     return xAxis.ticks(d3.timeWeek.every(1));
   }
 
+  if (activeTimeLabelObject.label === "1Y" && window.innerWidth < 600) {
+    return xAxis.ticks(d3.timeYear.every(1));
+  }
+
   return xAxis.ticks(d3.timeMonth.every(1));
 };
 
