@@ -68,5 +68,5 @@ export const getMinMaxStock = (
     .flat();
 
   // return min max of filtered data
-  return [Math.min.apply(null, data), Math.max.apply(null, data)];
+  return [Math.min.apply(null, data) - 1, Math.max.apply(null, data)];
 };

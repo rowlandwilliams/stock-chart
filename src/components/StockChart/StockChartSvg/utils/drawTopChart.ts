@@ -44,11 +44,11 @@ export const drawTopChart = (
 
   // set axes domains
   x.domain(datesDomain).range([0, width]);
-  y.domain(stocksDomain).range([topChartHeight, 50]);
+  y.domain(stocksDomain).range([topChartHeight - margin, margin]);
 
   // transition x axis
   xAxisGroup
-    .attr("transform", `translate(0, ${topChartHeight})`)
+    .attr("transform", `translate(0, ${topChartHeight - margin})`)
     .transition()
     .duration(800)
     .call(xAxis)
@@ -78,7 +78,6 @@ export const drawTopChart = (
     .selectAll("path")
     .data(convertedData)
     .join("path")
-    .attr("transform", `translate(0, ${-margin})`)
     .attr("fill", "none")
     .attr("stroke", (d, i) => supernovaColors[i])
     .attr("stroke-width", "1.5px")
@@ -92,7 +91,7 @@ export const drawTopChart = (
     .style("shape-rendering", "crispEdges")
     .style("opacity", 1)
     .attr("y1", 0)
-    .attr("y2", topChartHeight);
+    .attr("y2", topChartHeight - margin);
 
   focusCircles
     .data(convertedData)

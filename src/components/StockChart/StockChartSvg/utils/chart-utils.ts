@@ -6,7 +6,7 @@ export const margin = 20;
 // chart dimensions
 export const svgHeight = 500;
 export const topChartHeight = 320;
-export const bottomChartHeight = svgHeight - topChartHeight - margin * 2;
+export const bottomChartHeight = 180;
 
 // required keys for plotting lines
 export const stockKeys = ["open", "high", "low", "close"];
@@ -99,12 +99,12 @@ export const mousemove = (
   const idxFinal = x0 - d0 > d1 - x0 ? idx : idx - 1;
 
   // translate line based on current x value
-  focusLine.attr("transform", "translate(" + x(dFinal) + "," + 0 + ")");
+  focusLine.attr("transform", "translate(" + x(dFinal) + ",0)");
 
   // translate circle based on current x and y value
   focusCircles
     .attr("cx", x(dFinal))
-    .attr("cy", (d: any) => y(d.values[idxFinal].value) - margin);
+    .attr("cy", (d: any) => y(d.values[idxFinal].value));
 
   // for the given date get the value for each stockMetric
   const sequentialLineData: number[] = [];
@@ -206,7 +206,7 @@ const getTextTranslationFromData = (
         ? -maxTextWidthAndOffset
         : offset)) +
     "," + // multiply index by textheight to determine vertical position of each label in tooltip
-    (y(midStockValue) + index * textHeight - margin - 25) +
+    (y(midStockValue) + index * textHeight - 25) +
     ")"
   );
 };
@@ -230,7 +230,7 @@ const getRectTranslationFromData = (
         ? -maxTextWidthAndOffset - 5
         : margin / 2) +
       "," +
-      (y(midStockValue) + i * textHeight - margin - 2 * textHeight) +
+      (y(midStockValue) + i * textHeight - 2 * textHeight) +
       ")")
   );
 };
