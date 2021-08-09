@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import {
   convertStockDataForChart,
-  getDatesDomain,
-  getMinMaxStock,
+  getActiveDatesDomain,
+  getActiveMinMaxStock,
+  getFullDatesDomain,
+  getFullStockDomain,
 } from "./utils/data-utils";
 import { ConvertedData, StockData, TimeLabel } from "../../../types";
 import {
@@ -11,10 +13,11 @@ import {
   getAxisLabels,
   xAxisScale,
   topChartHeight,
-  bottomChartHeight,
+  svgHeight,
 } from "./utils/chart-utils";
 import { drawTopChart } from "./utils/drawTopChart";
 import classNames from "classnames";
+import { drawBottomChart } from "./utils/drawBottomChart";
 
 interface Props {
   stockData: StockData[];
@@ -38,6 +41,9 @@ export const StockChartSvg = ({
   // convert data to required format
   const convertedData = convertStockDataForChart(stockData);
 
+  const fullDatesDomain = getFullDatesDomain(stockData);
+  const fullStocksDomain = getFullStockDomain(stockData);
+
   //on page load set svg height
   useEffect(() => {
     const { current } = parentRef;
@@ -58,12 +64,18 @@ export const StockChartSvg = ({
   // each time time period button is clicked transition lines
   useEffect(() => {
     // prevent svg being loaded until parent width has been set
+    const topChartGroup = d3.select<SVGSVGElement, unknown>(
+      `#top-chart-group-${companyName}`
+    );
+    const bottomChartGroup = d3.select<SVGSVGElement, unknown>(
+      `#bottom-chart-group-${companyName}`
+    );
 
-    const xAxisGroup = d3.select<SVGSVGElement, unknown>(
+    const xAxisGroup = topChartGroup.select<SVGSVGElement>(
       `#x-axis-${companyName}`
     );
 
-    const yAxisGroup = d3.select<SVGSVGElement, unknown>(
+    const yAxisGroup = topChartGroup.select<SVGSVGElement>(
       `#y-axis-${companyName}`
     );
 
@@ -75,26 +87,26 @@ export const StockChartSvg = ({
     const latestDate = stockData.slice(-1)[0].date;
 
     // calculate dates domain based on activeTimeLabelObject (the time button which is clicked e.g 1W, 1M ...)
-    const datesDomain = getDatesDomain(
+    const activeDatesDomain = getActiveDatesDomain(
       stockData,
       latestDate,
       activeTimeLabelObject
     );
 
     // calculate stocks domain for y axis scaling
-    const stocksDomain = getMinMaxStock(
+    const activeStocksDomain = getActiveMinMaxStock(
       stockData,
       latestDate,
       activeTimeLabelObject
     );
 
     // define x axis scale
-    const x = xAxisScale(datesDomain, width);
+    const x = xAxisScale(activeDatesDomain, width);
     const y = d3.scaleLinear();
 
     // define x axis
     const xAxis = d3.axisBottom(x).tickSize(0);
-    const yAxis = d3.axisLeft(y).tickSize(-width).ticks(4);
+    const yAxis = d3.axisLeft(y).tickSize(-width).ticks(5);
 
     getAxisLabels(activeTimeLabelObject, xAxis);
 
@@ -105,8 +117,8 @@ export const StockChartSvg = ({
       companyName,
       x,
       y,
-      datesDomain,
-      stocksDomain,
+      activeDatesDomain,
+      activeStocksDomain,
       width,
       xAxis,
       yAxis,
@@ -115,6 +127,17 @@ export const StockChartSvg = ({
       stockData.map((x) => x.date),
       focusGroup
     );
+
+    drawBottomChart(
+      companyName,
+      width,
+      bottomChartGroup,
+      fullDatesDomain,
+      fullStocksDomain,
+      convertedData
+    );
+
+    d3.selectAll(".domain").remove();
   });
 
   const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
@@ -125,10 +148,9 @@ export const StockChartSvg = ({
       "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
     });
 
-  const svgHeight = 500;
 
   return (
-    <div ref={parentRef} id="chart-container">
+    <div className="w-full" ref={parentRef} id="chart-container">
       <svg
         width="100%"
         height={svgHeight}
@@ -136,7 +158,7 @@ export const StockChartSvg = ({
         pointerEvents="all"
       >
         <g
-          id="#top-chart"
+          id={`top-chart-group-${companyName}`}
           height={topChartHeight}
           transform={`translate(0,${margin})`}
         >
@@ -149,7 +171,7 @@ export const StockChartSvg = ({
             className={getClassFromChartHover()}
           ></g>
           <g
-            id={`chart-group-${companyName}`}
+            id={`lines-${companyName}`}
             className={getClassFromChartHover(true)}
           ></g>
           <g id={`focus-${companyName}`} className={getClassFromChartHover()}>
@@ -165,10 +187,12 @@ export const StockChartSvg = ({
           ></rect>
         </g>
         <g
-          id="#bottom_chart"
-          transform={`translate(0,${topChartHeight + margin * 2})`}
+          id={`bottom-chart-group-${companyName}`}
+          transform={`translate(0,${topChartHeight + margin})`}
         >
-          <rect width="100%" height={bottomChartHeight} fill="red"></rect>
+          <g id={`x-axis-${companyName}`}></g>
+          <g id={`y-axis-${companyName}`}></g>
+          <g id={`lines-${companyName}`}></g>
         </g>
       </svg>
     </div>

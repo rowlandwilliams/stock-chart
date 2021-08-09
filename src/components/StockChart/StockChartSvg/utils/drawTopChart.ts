@@ -1,9 +1,8 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
-import { margin, mousemove, supernovaColors } from "./chart-utils";
+import { margin, mousemove, supernovaColors, topChartHeight } from "./chart-utils";
 
 const chartBackgroundColor = "#1a1b3e";
-const topChartHeight = 320 - margin;
 
 export const drawTopChart = (
   xAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
@@ -22,7 +21,7 @@ export const drawTopChart = (
   focusGroup: d3.Selection<SVGSVGElement, ConvertedData, HTMLElement, any>
 ) => {
   // select lines g
-  const linesGroup = d3.select(`#chart-group-${companyName}`);
+  const linesGroup = d3.select(`#lines-${companyName}`);
 
   const svgGroup = d3.select<SVGSVGElement, unknown>(
     `#chart-svg-${companyName}`
@@ -52,10 +51,7 @@ export const drawTopChart = (
     .transition()
     .duration(800)
     .call(xAxis)
-    .attr("text-anchor", "end")
-    .on("start", () => {
-      xAxisGroup.select(".domain").remove(); // remove axis line
-    });
+    .attr("text-anchor", "end");
 
   yAxisGroup
     .attr("transform", `translate(0, ${0})`)

@@ -32,7 +32,7 @@ export const convertStockDataForChart = (stockData: StockData[]) => {
 };
 
 // calculate min and max date in data for x axis
-export const getDatesDomain = (
+export const getActiveDatesDomain = (
   stockData: StockData[],
   latestDate: number,
   activeTimeLabelObject: TimeLabel
@@ -54,13 +54,13 @@ export const getDatesDomain = (
 };
 
 // calculate min and max stock value
-export const getMinMaxStock = (
-  stockValues: StockData[],
+export const getActiveMinMaxStock = (
+  stockData: StockData[],
   latestDate: number,
   activeTimeLabelObject: TimeLabel
 ) => {
   // filter stockData based on clicked timescale
-  const data: number[] = stockValues
+  const data: number[] = stockData
     .filter(
       (stockObj) => stockObj.date > latestDate - activeTimeLabelObject.timescale
     )
@@ -68,5 +68,19 @@ export const getMinMaxStock = (
     .flat();
 
   // return min max of filtered data
-  return [Math.min.apply(null, data) - 1, Math.max.apply(null, data)];
+  return [Math.min(...data) - 0.5, Math.max(...data) + 1];
+};
+
+export const getFullDatesDomain = (stockData: StockData[]) => {
+  const dates = stockData.map((x) => x.date);
+
+  return [Math.min(...dates), Math.max(...dates)];
+};
+
+export const getFullStockDomain = (stockData: StockData[]) => {
+  const data: number[] = stockData
+    .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
+    .flat();
+
+  return [Math.min(...data), Math.max(...data)];
 };

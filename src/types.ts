@@ -5,7 +5,6 @@ export interface StockData {
   high: number;
   low: number;
   close: number;
-  adjClose: number;
   volume: number;
 }
 
