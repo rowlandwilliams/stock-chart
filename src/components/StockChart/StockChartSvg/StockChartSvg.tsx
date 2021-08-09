@@ -148,7 +148,6 @@ export const StockChartSvg = ({
       "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
     });
 
-
   return (
     <div className="w-full" ref={parentRef} id="chart-container">
       <svg
@@ -193,6 +192,7 @@ export const StockChartSvg = ({
           <g id={`x-axis-${companyName}`}></g>
           <g id={`y-axis-${companyName}`}></g>
           <g id={`lines-${companyName}`}></g>
+          <g id={`brush-${companyName}`}></g>
         </g>
       </svg>
     </div>

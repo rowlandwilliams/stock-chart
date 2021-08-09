@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
-import { margin, mousemove, supernovaColors, topChartHeight } from "./chart-utils";
+import { mousemove, supernovaColors, topChartHeight } from "./chart-utils";
 
 const chartBackgroundColor = "#1a1b3e";
 

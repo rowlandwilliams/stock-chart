@@ -1,6 +1,8 @@
 import * as d3 from "d3";
+import { BrushBehavior } from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
 import { bottomChartHeight, margin, supernovaColors } from "./chart-utils";
+import * as d3Brush from "d3-brush";
 
 export const drawBottomChart = (
   companyName: string,
@@ -14,13 +16,20 @@ export const drawBottomChart = (
     `#x-axis-${companyName}`
   );
 
-  const yAxisGroup = bottomChartGroup.select<SVGSVGElement>(
-    `#y-axis-${companyName}`
+  const yAxisGroup = bottomChartGroup.select(`#y-axis-${companyName}`);
+
+  const linesGroup = bottomChartGroup.selectAll(`#lines-${companyName}`);
+
+  const brushGroup = bottomChartGroup.select<SVGSVGElement>(
+    `#brush-${companyName}`
   );
 
-  const linesGroup = bottomChartGroup.selectAll<SVGSVGElement, unknown>(
-    `#lines-${companyName}`
-  );
+  var brush = d3Brush.brushX().extent([
+    [0, 0],
+    [width, bottomChartHeight],
+  ]);
+  // .on("brush end", brushed);
+
   const xBottom = d3.scaleTime().domain(fullDatesDomain).range([0, width]);
   const yBottom = d3
     .scaleLinear()
@@ -32,6 +41,8 @@ export const drawBottomChart = (
   xAxisGroup
     .attr("transform", `translate(0, ${bottomChartHeight - margin})`)
     .call(xAxisBottom);
+
+  brushGroup.call(brush as any);
 
   const plotLinesBottom = d3
     .line<StockValue>()
