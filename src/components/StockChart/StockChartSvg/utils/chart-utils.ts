@@ -1,11 +1,16 @@
 import * as d3 from "d3";
 import { ConvertedData, TimeLabel } from "../../../../types";
 
+export const margin = 20;
+
+// chart dimensions
+export const svgHeight = 500;
+export const topChartHeight = 320;
+export const bottomChartHeight = svgHeight - topChartHeight - margin * 2;
+
 // required keys for plotting lines
 export const stockKeys = ["open", "high", "low", "close"];
 export const supernovaColors = ["#52a866", "#FF715B", "#E9FEA5", "#E0D9FE"];
-
-export const margin = 20;
 
 export const capitalizeString = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

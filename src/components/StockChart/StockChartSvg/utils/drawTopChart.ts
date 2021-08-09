@@ -1,10 +1,11 @@
 import * as d3 from "d3";
 import { ConvertedData, StockValue } from "../../../../types";
-import { mousemove, supernovaColors } from "./chart-utils";
+import { margin, mousemove, supernovaColors } from "./chart-utils";
 
 const chartBackgroundColor = "#1a1b3e";
+const topChartHeight = 320 - margin;
 
-export const drawLines = (
+export const drawTopChart = (
   xAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   companyName: string,
@@ -13,7 +14,6 @@ export const drawLines = (
   datesDomain: number[],
   stocksDomain: number[],
   width: number,
-  height: number,
   xAxis: d3.Axis<d3.NumberValue | Date>,
   yAxis: d3.Axis<d3.NumberValue>,
   convertedData: ConvertedData[],
@@ -44,11 +44,11 @@ export const drawLines = (
 
   // set axes domains
   x.domain(datesDomain).range([0, width]);
-  y.domain(stocksDomain).range([height, 50]);
+  y.domain(stocksDomain).range([topChartHeight, 50]);
 
   // transition x axis
   xAxisGroup
-    .attr("transform", `translate(0, ${height})`)
+    .attr("transform", `translate(0, ${topChartHeight})`)
     .transition()
     .duration(800)
     .call(xAxis)
@@ -92,7 +92,7 @@ export const drawLines = (
     .style("shape-rendering", "crispEdges")
     .style("opacity", 1)
     .attr("y1", 0)
-    .attr("y2", height);
+    .attr("y2", topChartHeight);
 
   focusCircles
     .data(convertedData)
