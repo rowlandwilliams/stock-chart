@@ -92,7 +92,7 @@ export const getBrushedMinMaxStock = (
   // filter stockData based on clicked timescale
   const data: number[] = stockData
     .filter(
-      (stockObj) => stockObj.date < latestDate && stockObj.date > earliestDate
+      (stockObj) => stockObj.date <= latestDate && stockObj.date >= earliestDate
     )
     .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
     .flat();

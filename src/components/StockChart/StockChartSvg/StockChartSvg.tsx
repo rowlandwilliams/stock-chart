@@ -22,6 +22,7 @@ import classNames from "classnames";
 import { drawBottomChart } from "./utils/drawBottomChart";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
 import { line } from "d3";
+import { act } from "react-dom/test-utils";
 
 interface Props {
   stockData: StockData[];
@@ -151,7 +152,8 @@ export const StockChartSvg = ({
       linesGroup,
       y,
       yAxisGroup,
-      yAxis
+      yAxis,
+      activeDatesDomain
     );
 
     d3.selectAll(".domain").remove();

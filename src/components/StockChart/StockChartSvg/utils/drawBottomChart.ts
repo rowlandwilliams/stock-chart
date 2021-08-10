@@ -1,4 +1,5 @@
 import {
+  active,
   axisBottom,
   brushX,
   line,
@@ -31,7 +32,8 @@ export const drawBottomChart = (
   linesGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yTop: d3.ScaleLinear<number, number, never>,
   yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  yAxisTop: d3.Axis<d3.NumberValue>
+  yAxisTop: d3.Axis<d3.NumberValue>,
+  activeDatesDomain: number[]
 ) => {
   const xAxisGroupBottom = bottomChartGroup.select<SVGSVGElement>(
     `#x-axis-${companyName}`
@@ -42,6 +44,22 @@ export const drawBottomChart = (
   const brushGroup = bottomChartGroup.select<SVGSVGElement>(
     `#brush-${companyName}`
   );
+
+  const xBottom = scaleTime().domain(fullDatesDomain).range([0, width]);
+  const yBottom = scaleLinear()
+    .domain(fullStocksDomain)
+    .range([bottomChartHeight - margin, margin]);
+  console.log(
+    xBottom(activeDatesDomain[0]),
+    xBottom(activeDatesDomain[1]),
+    width
+  );
+
+  const xAxisBottom = axisBottom(xBottom).tickSize(0);
+
+  xAxisGroupBottom
+    .attr("transform", `translate(0, ${bottomChartHeight - margin})`)
+    .call(xAxisBottom);
 
   var brush = brushX()
     .extent([
@@ -64,30 +82,13 @@ export const drawBottomChart = (
       )
     );
 
-  var zoomTest: any = zoom()
-    .scaleExtent([1, Infinity])
-    .translateExtent([
-      [0, 0],
-      [width, topChartHeight],
-    ])
-    .extent([
-      [0, 0],
-      [width, topChartHeight],
+  brushGroup
+    .call(brush as any)
+    .call(brush.move as any, [
+      xBottom(activeDatesDomain[0]),
+      xBottom(activeDatesDomain[1]),
     ]);
-
-  const xBottom = scaleTime().domain(fullDatesDomain).range([0, width]);
-  const yBottom = scaleLinear()
-    .domain(fullStocksDomain)
-    .range([bottomChartHeight - margin, margin]);
-
-  const xAxisBottom = axisBottom(xBottom).tickSize(0);
-
-  xAxisGroupBottom
-    .attr("transform", `translate(0, ${bottomChartHeight - margin})`)
-    .call(xAxisBottom);
-
-  brushGroup.call(brush as any).call(brush.move as any, xBottom.range());
-
+  console.log(xTop.range());
   const plotLinesBottom = line<StockValue>()
     .x((d) => xBottom(d.date))
     .y((d) => yBottom(d.value));
@@ -119,7 +120,6 @@ const updateTopChart = (
 ) => {
   const selection = { event };
   const extent = selection.event.selection;
-
   const brushedDatesDomain = extent.map((x: number) =>
     xBottom.invert(x).getTime()
   );
@@ -130,8 +130,6 @@ const updateTopChart = (
     brushedDatesDomain[1],
     brushedDatesDomain[1] - brushedDatesDomain[0]
   );
-
-  console.log(brushedDatesDomain, newYDomain);
 
   yTop.domain(newYDomain);
 
