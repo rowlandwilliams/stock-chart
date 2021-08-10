@@ -77,25 +77,7 @@ export const drawBottomChart = (
       [0, 0],
       [width, bottomChartHeight - margin],
     ]) // upon brush change, update top chart
-    .on("brush", (event) => {
-      const selection = { event };
-      const extent = selection.event.selection;
-
-      if (!extent) return;
-
-      // calculate new dates domain based on brushed dates
-      const brushedDatesDomain = extent.map((x: number) =>
-        xBottom.invert(x).getTime()
-      );
-      const clipLeft = select("#area-crop-left > rect");
-      clipLeft
-        .attr(
-          "width",
-          xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
-        )
-        .attr("x", xBottom(brushedDatesDomain[0]));
-    })
-    .on("end", (event) =>
+    .on("brush", (event) =>
       updateTopChart(
         event,
         xBottom,
