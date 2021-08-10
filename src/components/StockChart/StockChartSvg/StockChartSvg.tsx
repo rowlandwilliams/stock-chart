@@ -149,7 +149,9 @@ export const StockChartSvg = ({
       xAxisGroup,
       xAxis,
       linesGroup,
-      y
+      y,
+      yAxisGroup,
+      yAxis
     );
 
     d3.selectAll(".domain").remove();

@@ -3,6 +3,7 @@ import {
   brushX,
   line,
   scaleLinear,
+  ScaleTime,
   scaleTime,
   timeMonth,
   zoom,
@@ -14,7 +15,7 @@ import {
   supernovaColors,
   topChartHeight,
 } from "./chart-utils";
-import { getActiveMinMaxStock } from "./data-utils";
+import { getActiveMinMaxStock, getBrushedMinMaxStock } from "./data-utils";
 
 export const drawBottomChart = (
   companyName: string,
@@ -28,13 +29,13 @@ export const drawBottomChart = (
   xAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   xAxisTop: d3.Axis<d3.NumberValue | Date>,
   linesGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  yTop: d3.ScaleLinear<number, number, never>
+  yTop: d3.ScaleLinear<number, number, never>,
+  yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  yAxisTop: d3.Axis<d3.NumberValue>
 ) => {
   const xAxisGroupBottom = bottomChartGroup.select<SVGSVGElement>(
     `#x-axis-${companyName}`
   );
-
-  const yAxisGroup = bottomChartGroup.select(`#y-axis-${companyName}`);
 
   const linesGroup = bottomChartGroup.selectAll(`#lines-${companyName}`);
 
@@ -42,58 +43,26 @@ export const drawBottomChart = (
     `#brush-${companyName}`
   );
 
-  // A function that set idleTimeOut to null
-  var idleTimeout: any;
-  function idled() {
-    idleTimeout = null;
-  }
-
-  const updateTopChart = (event: any) => {
-    const selection = { event };
-    const extent = selection.event.selection;
-    console.log(extent.map((x: number) => xTop.invert(x)));
-
-    const brushedDatesDomain = extent.map((x: number) =>
-      xBottom.invert(x).getTime()
-    );
-    xTop.domain(brushedDatesDomain);
-
-    const newYDomain = getActiveMinMaxStock(
-      stockData,
-      brushedDatesDomain[1],
-      brushedDatesDomain[1] - brushedDatesDomain[0]
-    );
-
-    yTop.domain(newYDomain);
-
-    xAxisGroupTop
-      .transition()
-      .duration(800)
-      .call(xAxisTop)
-      .attr("text-anchor", "end");
-
-    const plotLine = line<StockValue>()
-      .x((d) => xTop(d.date))
-      .y((d) => yTop(d.value));
-
-    linesGroupTop
-      .selectAll("path")
-      .data(convertedData)
-      .join("path")
-      .attr("fill", "none")
-      .attr("stroke", (d, i) => supernovaColors[i])
-      .attr("stroke-width", "2px")
-      .transition()
-      .duration(800)
-      .attr("d", (d) => plotLine(d.values));
-  };
-
   var brush = brushX()
     .extent([
       [0, 0],
       [width, bottomChartHeight - margin],
     ])
-    .on("end", updateTopChart);
+    .on("end", (event) =>
+      updateTopChart(
+        event,
+        xBottom,
+        stockData,
+        xAxisGroupTop,
+        xTop,
+        xAxisTop,
+        linesGroupTop,
+        convertedData,
+        yAxisGroupTop,
+        yTop,
+        yAxisTop
+      )
+    );
 
   var zoomTest: any = zoom()
     .scaleExtent([1, Infinity])
@@ -133,4 +102,72 @@ export const drawBottomChart = (
     .transition()
     .duration(800)
     .attr("d", (d) => plotLinesBottom(d.values));
+};
+
+const updateTopChart = (
+  event: any,
+  xBottom: ScaleTime<number, number, never>,
+  stockData: StockData[],
+  xAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  xTop: d3.ScaleTime<number, number, never>,
+  xAxisTop: d3.Axis<d3.NumberValue | Date>,
+  linesGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  convertedData: ConvertedData[],
+  yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  yTop: d3.ScaleLinear<number, number, never>,
+  yAxisTop: d3.Axis<d3.NumberValue>
+) => {
+  const selection = { event };
+  const extent = selection.event.selection;
+
+  const brushedDatesDomain = extent.map((x: number) =>
+    xBottom.invert(x).getTime()
+  );
+  xTop.domain(brushedDatesDomain);
+
+  const newYDomain = getBrushedMinMaxStock(
+    stockData,
+    brushedDatesDomain[1],
+    brushedDatesDomain[1] - brushedDatesDomain[0]
+  );
+
+  console.log(brushedDatesDomain, newYDomain);
+
+  yTop.domain(newYDomain);
+
+  xAxisGroupTop
+    .transition()
+    .duration(800)
+    .call(xAxisTop)
+    .attr("text-anchor", "end");
+
+  yAxisGroupTop
+    .transition()
+    .duration(800)
+    .call(yAxisTop)
+    .on("start", () => {
+      yAxisGroupTop.select(".domain").remove(); // remove axis line
+      yAxisGroupTop
+        .selectAll(".tick > line")
+        .attr("opacity", 0.5)
+        .style("stroke-dasharray", "5 5");
+    })
+    .selectAll("text")
+    .attr("transform", "translate(4, -8)")
+    .attr("text-anchor", "start");
+
+  const plotLine = line<StockValue>()
+    .x((d) => xTop(d.date))
+    .y((d) => yTop(d.value));
+
+  linesGroupTop
+    .selectAll("path")
+    .data(convertedData)
+    .join("path")
+    .attr("fill", "none")
+    .attr("stroke", (d, i) => supernovaColors[i])
+    .attr("stroke-width", "2px")
+    .transition()
+    .duration(800)
+    .attr("d", (d) => plotLine(d.values));
 };

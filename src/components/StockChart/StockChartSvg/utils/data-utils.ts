@@ -82,3 +82,21 @@ export const getFullStockDomain = (stockData: StockData[]) => {
 
   return [Math.min(...data), Math.max(...data)];
 };
+
+// calculate min and max stock value
+export const getBrushedMinMaxStock = (
+  stockData: StockData[],
+  latestDate: number,
+  earliestDate: number
+) => {
+  // filter stockData based on clicked timescale
+  const data: number[] = stockData
+    .filter(
+      (stockObj) => stockObj.date < latestDate && stockObj.date > earliestDate
+    )
+    .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
+    .flat();
+
+  // return min max of filtered data
+  return [Math.min(...data) - 0.5, Math.max(...data) + 1];
+};
