@@ -16,6 +16,7 @@ import {
   svgHeight,
   stockKeys,
   supernovaColors,
+  bottomChartHeight,
 } from "./utils/chart-utils";
 import { drawTopChart } from "./utils/drawTopChart";
 import classNames from "classnames";
@@ -88,6 +89,8 @@ export const StockChartSvg = ({
       `#lines-${companyName}`
     );
 
+    const areaGroup = topChartGroup.select(`#area-${companyName}`);
+
     const focusGroup = d3.select<SVGSVGElement, ConvertedData>(
       `#focus-${companyName}`
     );
@@ -153,7 +156,8 @@ export const StockChartSvg = ({
       y,
       yAxisGroup,
       yAxis,
-      activeDatesDomain
+      activeDatesDomain,
+      areaGroup
     );
 
     d3.selectAll(".domain").remove();
@@ -175,10 +179,19 @@ export const StockChartSvg = ({
         id={`chart-svg-${companyName}`}
         pointerEvents="all"
       >
+        <clipPath id="area-crop-left" pointerEvents="all">
+          <rect height="100%"></rect>
+        </clipPath>
         <defs>
           {stockKeys.map((stockKey, i) => (
             <LinearGradient
-              gradientId={stockKey}
+              gradientId={stockKey + "-top"}
+              gradientColor={supernovaColors[i]}
+            />
+          ))}
+          {stockKeys.map((stockKey, i) => (
+            <LinearGradient
+              gradientId={stockKey + "-bottom"}
               gradientColor={supernovaColors[i]}
             />
           ))}
@@ -222,6 +235,7 @@ export const StockChartSvg = ({
         >
           <g id={`x-axis-${companyName}`}></g>
           <g id={`y-axis-${companyName}`}></g>
+          <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
           <g id={`lines-${companyName}`}></g>
           <g id={`brush-${companyName}`}></g>
         </g>

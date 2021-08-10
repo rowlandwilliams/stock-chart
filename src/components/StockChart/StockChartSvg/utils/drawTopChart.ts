@@ -83,16 +83,15 @@ export const drawTopChart = (
     .attr("transform", "translate(4, -8)")
     .attr("text-anchor", "start");
 
-  // add lines
-  // areaGroup
-  //   .selectAll("path")
-  //   .data(convertedData)
-  //   .join("path")
-  //   .attr("fill", (d, i) => `url(#${stockKeys[i]})`)
-  //   .attr("stroke-width", 0)
-  //   .transition()
-  //   .duration(800)
-  //   .attr("d", (d) => plotArea(d.values));
+  areaGroup
+    .selectAll("path")
+    .data(convertedData)
+    .join("path")
+    .attr("fill", (d, i) => `url(#${stockKeys[i]}-top)`)
+    .attr("stroke-width", 0)
+    .transition()
+    .duration(800)
+    .attr("d", (d) => plotArea(d.values));
 
   linesGroup
     .selectAll("path")

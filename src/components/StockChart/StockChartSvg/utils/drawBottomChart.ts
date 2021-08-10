@@ -1,22 +1,25 @@
 import {
   active,
+  area,
   axisBottom,
+  BrushBehavior,
   brushX,
   line,
   scaleLinear,
   ScaleTime,
   scaleTime,
-  timeMonth,
-  zoom,
+  select,
 } from "d3";
+import { act } from "react-dom/test-utils";
 import { ConvertedData, StockData, StockValue } from "../../../../types";
 import {
   bottomChartHeight,
   margin,
+  stockKeys,
   supernovaColors,
   topChartHeight,
 } from "./chart-utils";
-import { getActiveMinMaxStock, getBrushedMinMaxStock } from "./data-utils";
+import { getActiveDatesDomain, getBrushedMinMaxStock } from "./data-utils";
 
 export const drawBottomChart = (
   companyName: string,
@@ -33,39 +36,65 @@ export const drawBottomChart = (
   yTop: d3.ScaleLinear<number, number, never>,
   yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yAxisTop: d3.Axis<d3.NumberValue>,
-  activeDatesDomain: number[]
+  activeDatesDomain: number[],
+  areaGroupTop: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
 ) => {
   const xAxisGroupBottom = bottomChartGroup.select<SVGSVGElement>(
     `#x-axis-${companyName}`
   );
 
-  const linesGroup = bottomChartGroup.selectAll(`#lines-${companyName}`);
+  const linesGroupBottom = bottomChartGroup.selectAll(`#lines-${companyName}`);
+  const areaGroupBottom = bottomChartGroup.selectAll(`#area-${companyName}`);
 
   const brushGroup = bottomChartGroup.select<SVGSVGElement>(
     `#brush-${companyName}`
   );
 
+  // define x and y scale for bottom graph
   const xBottom = scaleTime().domain(fullDatesDomain).range([0, width]);
   const yBottom = scaleLinear()
     .domain(fullStocksDomain)
     .range([bottomChartHeight - margin, margin]);
-  console.log(
-    xBottom(activeDatesDomain[0]),
-    xBottom(activeDatesDomain[1]),
-    width
-  );
 
+  // define x axis for bottom graph
   const xAxisBottom = axisBottom(xBottom).tickSize(0);
 
+  // plot bottom x axis
   xAxisGroupBottom
     .attr("transform", `translate(0, ${bottomChartHeight - margin})`)
     .call(xAxisBottom);
 
-  var brush = brushX()
+  const xBottomArea = scaleTime().domain(activeDatesDomain);
+  xBottomArea.range([0, width / 2]);
+
+  //[xBottom(activeDatesDomain[0]), xBottom(activeDatesDomain[1])]);
+  console.log(xBottom(activeDatesDomain[1]) - xBottom(activeDatesDomain[0]));
+
+  // define brush function for bottom graph
+  var brush: any = brushX()
     .extent([
+      // area that we want the brush to be available for (whole bottom graph)
       [0, 0],
       [width, bottomChartHeight - margin],
-    ])
+    ]) // upon brush change, update top chart
+    .on("brush", (event) => {
+      const selection = { event };
+      const extent = selection.event.selection;
+
+      if (!extent) return;
+
+      // calculate new dates domain based on brushed dates
+      const brushedDatesDomain = extent.map((x: number) =>
+        xBottom.invert(x).getTime()
+      );
+      const clipLeft = select("#area-crop-left > rect");
+      clipLeft
+        .attr(
+          "width",
+          xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
+        )
+        .attr("x", xBottom(brushedDatesDomain[0]));
+    })
     .on("end", (event) =>
       updateTopChart(
         event,
@@ -78,22 +107,31 @@ export const drawBottomChart = (
         convertedData,
         yAxisGroupTop,
         yTop,
-        yAxisTop
+        yAxisTop,
+        brushGroup,
+        brush,
+        width,
+        areaGroupTop
       )
     );
 
+  // call brush function and set initial position / position on time label click
   brushGroup
     .call(brush as any)
+    .transition()
+    .duration(800)
     .call(brush.move as any, [
       xBottom(activeDatesDomain[0]),
       xBottom(activeDatesDomain[1]),
     ]);
-  console.log(xTop.range());
+
+  // define line function for bottom chart
   const plotLinesBottom = line<StockValue>()
     .x((d) => xBottom(d.date))
     .y((d) => yBottom(d.value));
 
-  linesGroup
+  // plot bottom chart lines
+  linesGroupBottom
     .selectAll("path")
     .data(convertedData)
     .join("path")
@@ -103,6 +141,23 @@ export const drawBottomChart = (
     .transition()
     .duration(800)
     .attr("d", (d) => plotLinesBottom(d.values));
+
+  const plotAreaBottom = area<StockValue>()
+    .x((d) => xBottom(d.date))
+    .y0(bottomChartHeight - margin)
+    .y1((d) => yBottom(d.value));
+
+  const translate = xBottom(activeDatesDomain[0]);
+  console.log(translate, xBottomArea(activeDatesDomain[0]));
+  areaGroupBottom
+    .selectAll("path")
+    .data(convertedData)
+    .join("path")
+    .attr("fill", (d, i) => `url(#${stockKeys[i]}-bottom)`)
+    .attr("stroke-width", 0)
+    .transition()
+    .duration(800)
+    .attr("d", (d) => plotAreaBottom(d.values));
 };
 
 const updateTopChart = (
@@ -116,23 +171,46 @@ const updateTopChart = (
   convertedData: ConvertedData[],
   yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yTop: d3.ScaleLinear<number, number, never>,
-  yAxisTop: d3.Axis<d3.NumberValue>
+  yAxisTop: d3.Axis<d3.NumberValue>,
+  brushGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  brush: BrushBehavior<unknown>,
+  width: number,
+  areaGroupTop: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
 ) => {
+  // get extent of brush selection
   const selection = { event };
   const extent = selection.event.selection;
+
+  if (!extent) return;
+
+  // calculate new dates domain based on brushed dates
   const brushedDatesDomain = extent.map((x: number) =>
     xBottom.invert(x).getTime()
   );
+
+  // update top chart x axis with new domain
   xTop.domain(brushedDatesDomain);
 
-  const newYDomain = getBrushedMinMaxStock(
+  // calculate new stocks domain based on brushed dates
+  const brushedStocksDomain = getBrushedMinMaxStock(
     stockData,
     brushedDatesDomain[1],
-    brushedDatesDomain[1] - brushedDatesDomain[0]
+    brushedDatesDomain[0]
   );
+  console.log(xBottom(brushedDatesDomain[0]));
 
-  yTop.domain(newYDomain);
+  const clipLeft = select("#area-crop-left > rect");
+  clipLeft
+    .attr(
+      "width",
+      xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
+    )
+    .attr("x", xBottom(brushedDatesDomain[0]));
 
+  // update top chart y axis with new domain
+  yTop.domain(brushedStocksDomain);
+
+  //
   xAxisGroupTop
     .transition()
     .duration(800)
@@ -168,4 +246,19 @@ const updateTopChart = (
     .transition()
     .duration(800)
     .attr("d", (d) => plotLine(d.values));
+
+  const plotArea = area<StockValue>()
+    .x((d) => xTop(d.date))
+    .y0(topChartHeight - margin)
+    .y1((d) => yTop(d.value));
+
+  areaGroupTop
+    .selectAll("path")
+    .data(convertedData)
+    .join("path")
+    .attr("fill", (d, i) => `url(#${stockKeys[i]}-top)`)
+    .attr("stroke-width", 0)
+    .transition()
+    .duration(800)
+    .attr("d", (d) => plotArea(d.values));
 };

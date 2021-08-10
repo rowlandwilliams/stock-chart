@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { ConvertedData, TimeLabel } from "../../../../types";
+import { ConvertedData, StockValue, TimeLabel } from "../../../../types";
 
 export const margin = 20;
 
@@ -242,3 +242,5 @@ const getRectTranslationFromData = (
       ")")
   );
 };
+
+
