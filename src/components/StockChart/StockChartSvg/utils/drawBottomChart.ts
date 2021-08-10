@@ -1,5 +1,4 @@
 import {
-  active,
   area,
   axisBottom,
   BrushBehavior,
@@ -11,7 +10,6 @@ import {
   select,
   selectAll,
 } from "d3";
-import { act } from "react-dom/test-utils";
 import { ConvertedData, StockData, StockValue } from "../../../../types";
 import {
   bottomChartHeight,
@@ -20,7 +18,7 @@ import {
   supernovaColors,
   topChartHeight,
 } from "./chart-utils";
-import { getActiveDatesDomain, getBrushedMinMaxStock } from "./data-utils";
+import { getBrushedMinMaxStock } from "./data-utils";
 
 export const drawBottomChart = (
   companyName: string,
