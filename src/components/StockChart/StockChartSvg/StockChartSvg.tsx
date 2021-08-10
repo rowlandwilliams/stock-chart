@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import * as d3 from "d3";
 import {
   convertStockDataForChart,
   getActiveDatesDomain,
@@ -7,23 +6,20 @@ import {
   getFullDatesDomain,
   getFullStockDomain,
 } from "./utils/data-utils";
-import { ConvertedData, StockData, TimeLabel } from "../../../types";
+import { StockData, TimeLabel } from "../../../types";
 import {
   margin,
-  getAxisLabels,
   xAxisScale,
   topChartHeight,
   svgHeight,
   stockKeys,
   supernovaColors,
-  bottomChartHeight,
 } from "./utils/chart-utils";
-import { drawTopChart } from "./utils/drawTopChart";
+import { drawTopChart } from "./utils/drawTopChart/drawTopChart";
 import classNames from "classnames";
 import { drawBottomChart } from "./utils/drawBottomChart";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
-import { line } from "d3";
-import { act } from "react-dom/test-utils";
+import { axisBottom, axisLeft, line, scaleLinear, select, selectAll } from "d3";
 
 interface Props {
   stockData: StockData[];
@@ -70,10 +66,10 @@ export const StockChartSvg = ({
   // each time time period button is clicked transition lines
   useEffect(() => {
     // prevent svg being loaded until parent width has been set
-    const topChartGroup = d3.select<SVGSVGElement, unknown>(
+    const topChartGroup = select<SVGSVGElement, unknown>(
       `#top-chart-group-${companyName}`
     );
-    const bottomChartGroup = d3.select<SVGSVGElement, unknown>(
+    const bottomChartGroup = select<SVGSVGElement, unknown>(
       `#bottom-chart-group-${companyName}`
     );
 
@@ -90,10 +86,6 @@ export const StockChartSvg = ({
     );
 
     const areaGroup = topChartGroup.select(`#area-${companyName}`);
-
-    const focusGroup = d3.select<SVGSVGElement, ConvertedData>(
-      `#focus-${companyName}`
-    );
 
     // determine latest date
     const latestDate = stockData.slice(-1)[0].date;
@@ -114,11 +106,11 @@ export const StockChartSvg = ({
 
     // define x axis scale
     const x = xAxisScale(activeDatesDomain, width);
-    const y = d3.scaleLinear();
+    const y = scaleLinear();
 
     // define x axis
-    const xAxis = d3.axisBottom(x).tickSize(0);
-    const yAxis = d3.axisLeft(y).tickSize(-width).ticks(5);
+    const xAxis = axisBottom(x).tickSize(0);
+    const yAxis = axisLeft(y).tickSize(-width).ticks(5);
 
     // getAxisLabels(activeTimeLabelObject, xAxis);
 
@@ -138,7 +130,7 @@ export const StockChartSvg = ({
       convertedData,
       margin,
       stockData.map((x) => x.date),
-      focusGroup
+      topChartGroup
     );
 
     drawBottomChart(
@@ -160,7 +152,7 @@ export const StockChartSvg = ({
       areaGroup
     );
 
-    d3.selectAll(".domain").remove();
+    selectAll(".domain").remove();
   });
 
   const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
@@ -237,6 +229,7 @@ export const StockChartSvg = ({
           <g id={`y-axis-${companyName}`}></g>
           <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
           <g id={`lines-${companyName}`}></g>
+
           <g id={`brush-${companyName}`}></g>
         </g>
       </svg>

@@ -1,5 +1,6 @@
 import * as d3 from "d3";
-import { ConvertedData, StockValue, TimeLabel } from "../../../../types";
+import { ConvertedData, TimeLabel } from "../../../../types";
+import randomColor from "randomcolor";
 
 export const margin = 20;
 
@@ -11,11 +12,26 @@ export const bottomChartHeight = 130;
 // required keys for plotting lines
 export const stockKeys = ["high", "close", "open", "low"];
 export const supernovaColors = [
-  "#FF715B",
-  "#E9FEA5",
-  "#E0D9FE",
-  "#52a866",
+  "#ff0082",
+  "#ff793a",
+  "#ffda01",
+  "#0092f4",
 ].reverse();
+
+// [...Array(4)].map(
+//   (x) =>
+//     randomColor({
+//       luminosity: "light",
+//       format: "rgb",
+//     }) as string
+// );
+
+// // [
+//   "#FF715B",
+//   "#E9FEA5",
+//   "#E0D9FE",
+//   "#52a866",
+// ].reverse();
 
 export const capitalizeString = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -67,20 +83,10 @@ export const mousemove = (
   x: d3.ScaleTime<number, number, never>,
   y: d3.ScaleLinear<number, number, never>,
   dates: number[],
-  focusLine: d3.Selection<d3.BaseType, ConvertedData, HTMLElement, any>,
-  focusCircles: d3.Selection<
-    d3.BaseType,
-    unknown,
-    SVGSVGElement,
-    ConvertedData
-  >,
-  focusText: d3.Selection<d3.BaseType, unknown, SVGSVGElement, ConvertedData>,
-  focusTextRects: d3.Selection<
-    d3.BaseType,
-    unknown,
-    SVGSVGElement,
-    ConvertedData
-  >,
+  focusLine: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  focusCircles: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
+  focusText: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
+  focusTextRects: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   width: number
 ) => {
   // height of one label
@@ -106,10 +112,13 @@ export const mousemove = (
     const idxFinal = x0 - d0 > d1 - x0 ? idx : idx - 1;
 
     // translate line based on current x value
-    focusLine.attr("transform", "translate(" + x(dFinal) + ",0)");
+    focusLine
+      .attr("opacity", 1)
+      .attr("transform", "translate(" + x(dFinal) + ",0)");
 
     // translate circle based on current x and y value
     focusCircles
+      .attr("opacity", 1)
       .attr("cx", x(dFinal))
       .attr("cy", (d: any) => y(d.values[idxFinal].value));
 
@@ -242,5 +251,3 @@ const getRectTranslationFromData = (
       ")")
   );
 };
-
-

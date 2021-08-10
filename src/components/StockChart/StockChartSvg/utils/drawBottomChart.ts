@@ -9,6 +9,7 @@ import {
   ScaleTime,
   scaleTime,
   select,
+  selectAll,
 } from "d3";
 import { act } from "react-dom/test-utils";
 import { ConvertedData, StockData, StockValue } from "../../../../types";
@@ -42,10 +43,8 @@ export const drawBottomChart = (
   const xAxisGroupBottom = bottomChartGroup.select<SVGSVGElement>(
     `#x-axis-${companyName}`
   );
-
   const linesGroupBottom = bottomChartGroup.selectAll(`#lines-${companyName}`);
   const areaGroupBottom = bottomChartGroup.selectAll(`#area-${companyName}`);
-
   const brushGroup = bottomChartGroup.select<SVGSVGElement>(
     `#brush-${companyName}`
   );
@@ -129,8 +128,6 @@ export const drawBottomChart = (
     .y0(bottomChartHeight - margin)
     .y1((d) => yBottom(d.value));
 
-  const translate = xBottom(activeDatesDomain[0]);
-  console.log(translate, xBottomArea(activeDatesDomain[0]));
   areaGroupBottom
     .selectAll("path")
     .data(convertedData)
@@ -140,6 +137,8 @@ export const drawBottomChart = (
     .transition()
     .duration(800)
     .attr("d", (d) => plotAreaBottom(d.values));
+
+  selectAll(".domain").remove();
 };
 
 const updateTopChart = (
@@ -179,7 +178,6 @@ const updateTopChart = (
     brushedDatesDomain[1],
     brushedDatesDomain[0]
   );
-  console.log(xBottom(brushedDatesDomain[0]));
 
   const clipLeft = select("#area-crop-left > rect");
   clipLeft
