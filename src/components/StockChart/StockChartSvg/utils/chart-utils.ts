@@ -4,7 +4,7 @@ import { ConvertedData, TimeLabel } from "../../../../types";
 export const margin = 20;
 
 // chart dimensions
-export const svgHeight = 500;
+export const svgHeight = 520;
 export const topChartHeight = 350;
 export const bottomChartHeight = 130;
 

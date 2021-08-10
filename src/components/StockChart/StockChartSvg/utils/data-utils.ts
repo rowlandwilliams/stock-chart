@@ -57,13 +57,11 @@ export const getActiveDatesDomain = (
 export const getActiveMinMaxStock = (
   stockData: StockData[],
   latestDate: number,
-  activeTimeLabelObject: TimeLabel
+  activeTimeScale: number
 ) => {
   // filter stockData based on clicked timescale
   const data: number[] = stockData
-    .filter(
-      (stockObj) => stockObj.date > latestDate - activeTimeLabelObject.timescale
-    )
+    .filter((stockObj) => stockObj.date > latestDate - activeTimeScale)
     .map((stockObj: StockData) => stockKeys.map((key) => stockObj[key]))
     .flat();
 

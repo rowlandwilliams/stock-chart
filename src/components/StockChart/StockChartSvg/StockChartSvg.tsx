@@ -21,6 +21,7 @@ import { drawTopChart } from "./utils/drawTopChart";
 import classNames from "classnames";
 import { drawBottomChart } from "./utils/drawBottomChart";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
+import { line } from "d3";
 
 interface Props {
   stockData: StockData[];
@@ -82,6 +83,10 @@ export const StockChartSvg = ({
       `#y-axis-${companyName}`
     );
 
+    const linesGroup = topChartGroup.select<SVGSVGElement>(
+      `#lines-${companyName}`
+    );
+
     const focusGroup = d3.select<SVGSVGElement, ConvertedData>(
       `#focus-${companyName}`
     );
@@ -100,7 +105,7 @@ export const StockChartSvg = ({
     const activeStocksDomain = getActiveMinMaxStock(
       stockData,
       latestDate,
-      activeTimeLabelObject
+      activeTimeLabelObject.timescale
     );
 
     // define x axis scale
@@ -111,12 +116,13 @@ export const StockChartSvg = ({
     const xAxis = d3.axisBottom(x).tickSize(0);
     const yAxis = d3.axisLeft(y).tickSize(-width).ticks(5);
 
-    getAxisLabels(activeTimeLabelObject, xAxis);
+    // getAxisLabels(activeTimeLabelObject, xAxis);
 
     // draw lines
     drawTopChart(
       xAxisGroup,
       yAxisGroup,
+      linesGroup,
       companyName,
       x,
       y,
@@ -133,11 +139,17 @@ export const StockChartSvg = ({
 
     drawBottomChart(
       companyName,
+      stockData,
       width,
       bottomChartGroup,
       fullDatesDomain,
       fullStocksDomain,
-      convertedData
+      convertedData,
+      x,
+      xAxisGroup,
+      xAxis,
+      linesGroup,
+      y
     );
 
     d3.selectAll(".domain").remove();
@@ -151,7 +163,6 @@ export const StockChartSvg = ({
       "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
     });
 
-  console.log(stockData);
   return (
     <div className="w-full" ref={parentRef} id="chart-container">
       <svg
@@ -203,7 +214,7 @@ export const StockChartSvg = ({
         </g>
         <g
           id={`bottom-chart-group-${companyName}`}
-          transform={`translate(0,${topChartHeight + margin})`}
+          transform={`translate(0,${topChartHeight + margin * 2})`}
         >
           <g id={`x-axis-${companyName}`}></g>
           <g id={`y-axis-${companyName}`}></g>

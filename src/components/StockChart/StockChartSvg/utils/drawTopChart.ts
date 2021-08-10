@@ -12,6 +12,7 @@ const chartBackgroundColor = "#1a1b3e";
 export const drawTopChart = (
   xAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yAxisGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  linesGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   companyName: string,
   x: d3.ScaleTime<number, number, never>,
   y: d3.ScaleLinear<number, number, never>,
@@ -28,7 +29,7 @@ export const drawTopChart = (
   // select lines g
   const areaGroup = d3.select(`#area-${companyName}`);
 
-  const linesGroup = d3.select(`#lines-${companyName}`);
+  // const linesGroup = topChartGroup.select(`#lines-${companyName}`);
 
   const svgGroup = d3.select<SVGSVGElement, unknown>(
     `#chart-svg-${companyName}`
@@ -83,17 +84,15 @@ export const drawTopChart = (
     .attr("text-anchor", "start");
 
   // add lines
-  areaGroup
-    .selectAll("path")
-    .data(convertedData)
-    .join("path")
-    // .attr("opacity", 0.3)
-    .attr("fill", (d, i) => `url(#${stockKeys[i]})`)
-    // .attr("stroke", (d, i) => supernovaColors[i])
-    .attr("stroke-width", 0)
-    .transition()
-    .duration(800)
-    .attr("d", (d) => plotArea(d.values));
+  // areaGroup
+  //   .selectAll("path")
+  //   .data(convertedData)
+  //   .join("path")
+  //   .attr("fill", (d, i) => `url(#${stockKeys[i]})`)
+  //   .attr("stroke-width", 0)
+  //   .transition()
+  //   .duration(800)
+  //   .attr("d", (d) => plotArea(d.values));
 
   linesGroup
     .selectAll("path")
