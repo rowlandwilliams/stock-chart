@@ -15,27 +15,12 @@ export const getTopChartSelections = (
     `#focus-${companyName}`
   );
   return {
-    areaGroup: select(`#area-${companyName}`),
+    areaGroup: select<SVGSVGElement, unknown>(`#area-${companyName}`),
     focusGroup: focusGroup,
     focusLine: focusGroup.select<SVGSVGElement>("line"),
     focusCircles: focusGroup.selectAll<SVGSVGElement, unknown>("circle"),
     focusText: focusGroup.selectAll<SVGSVGElement, unknown>("text"),
     focusTextRects: focusGroup.selectAll<SVGSVGElement, unknown>("rect"),
-  };
-};
-
-export const getTopChartPlottingFunctions = (
-  x: d3.ScaleTime<number, number, never>,
-  y: d3.ScaleLinear<number, number, never>
-) => {
-  return {
-    plotStockLines: line<StockValue>()
-      .x((d) => x(d.date))
-      .y((d) => y(d.value)),
-    plotStockArea: area<StockValue>()
-      .x((d) => x(d.date))
-      .y0(topChartHeight - margin)
-      .y1((d) => y(d.value)),
   };
 };
 
@@ -81,34 +66,6 @@ export const plotTopChartAxes = (
     .attr("text-anchor", "start");
 };
 
-export const plotTopChartStockLinesAndAreas = (
-  areaGroup: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
-  convertedData: ConvertedData[],
-  plotStockArea: d3.Area<StockValue>,
-  linesGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  plotStockLines: d3.Line<StockValue>
-) => {
-  areaGroup
-    .selectAll("path")
-    .data(convertedData)
-    .join("path")
-    .attr("fill", (d, i) => `url(#${stockKeys[i]}-top)`)
-    .attr("stroke-svgWidth", 0)
-    .transition()
-    .duration(800)
-    .attr("d", (d) => plotStockArea(d.values));
-
-  linesGroupTop
-    .selectAll("path")
-    .data(convertedData)
-    .join("path")
-    .attr("fill", "none")
-    .attr("stroke", (d, i) => supernovaColors[i])
-    .attr("stroke-svgWidth", "2px")
-    .transition()
-    .duration(800)
-    .attr("d", (d) => plotStockLines(d.values));
-};
 
 const chartBackgroundColor = "#1a1b3e";
 

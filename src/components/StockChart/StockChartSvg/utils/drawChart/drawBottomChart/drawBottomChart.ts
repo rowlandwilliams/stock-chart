@@ -19,7 +19,10 @@ import {
   topChartHeight,
 } from "../../chart-utils";
 import { getBrushedMinMaxStock } from "../../data-utils";
-import { getChartPlottingFunctions } from "../common-utils";
+import {
+  getChartPlottingFunctions,
+  plotChartStockLinesAndAreas,
+} from "../common-utils";
 import { getBottomChartScalesAndAxes, getBottomChartSelections } from "./utils";
 
 export const drawBottomChart = (
@@ -56,8 +59,6 @@ export const drawBottomChart = (
 
   const xBottomArea = scaleTime().domain(activeDatesDomain);
   xBottomArea.range([0, width / 2]);
-
-  //[xBottom(activeDatesDomain[0]), xBottom(activeDatesDomain[1])]);
 
   // define line and area functions
   const { plotStockLines, plotStockArea } = getChartPlottingFunctions(
@@ -136,37 +137,13 @@ export const drawBottomChart = (
       xBottom(activeDatesDomain[1]),
     ]);
 
-  // define line function for bottom chart
-  const plotLinesBottom = line<StockValue>()
-    .x((d) => xBottom(d.date))
-    .y((d) => yBottom(d.value));
-
-  // plot bottom chart lines
-  linesGroupBottom
-    .selectAll("path")
-    .data(convertedData)
-    .join("path")
-    .attr("fill", "none")
-    .attr("stroke", (d, i) => supernovaColors[i])
-    .attr("stroke-width", "0.5px")
-    .transition()
-    .duration(800)
-    .attr("d", (d) => plotStockLines(d.values));
-
-  const plotAreaBottom = area<StockValue>()
-    .x((d) => xBottom(d.date))
-    .y0(bottomChartHeight - margin)
-    .y1((d) => yBottom(d.value));
-
-  areaGroupBottom
-    .selectAll("path")
-    .data(convertedData)
-    .join("path")
-    .attr("fill", (d, i) => `url(#${stockKeys[i]}-bottom)`)
-    .attr("stroke-width", 0)
-    .transition()
-    .duration(800)
-    .attr("d", (d) => plotStockArea(d.values));
+  plotChartStockLinesAndAreas(
+    areaGroupBottom,
+    convertedData,
+    plotStockArea,
+    linesGroupBottom,
+    plotStockLines
+  );
 
   selectAll(".domain").remove();
 };

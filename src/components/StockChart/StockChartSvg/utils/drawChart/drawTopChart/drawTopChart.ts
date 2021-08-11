@@ -1,12 +1,14 @@
 import * as d3 from "d3";
 import { ConvertedData } from "../../../../../../types";
-import { mousemove } from "../../chart-utils";
+import { mousemove, topChartHeight } from "../../chart-utils";
+import {
+  getChartPlottingFunctions,
+  plotChartStockLinesAndAreas,
+} from "../common-utils";
 import {
   addFocusLineCirclesAndText,
-  getTopChartPlottingFunctions,
   getTopChartSelections,
   plotTopChartAxes,
-  plotTopChartStockLinesAndAreas,
   updateTopChartAxesDomains,
 } from "./utils";
 
@@ -38,9 +40,10 @@ export const drawTopChart = (
   } = getTopChartSelections(companyName, topChartGroup);
 
   // define line plotting function based on x and y scales
-  const { plotStockLines, plotStockArea } = getTopChartPlottingFunctions(
+  const { plotStockLines, plotStockArea } = getChartPlottingFunctions(
     xTop,
-    yTop
+    yTop,
+    topChartHeight - margin
   );
 
   // set axes domains
@@ -56,7 +59,7 @@ export const drawTopChart = (
   plotTopChartAxes(xAxisGroupTop, yAxisGroupTop, xAxisTop, yAxisTop);
 
   // plot lines and areas for stock data
-  plotTopChartStockLinesAndAreas(
+  plotChartStockLinesAndAreas(
     areaGroup,
     convertedData,
     plotStockArea,
