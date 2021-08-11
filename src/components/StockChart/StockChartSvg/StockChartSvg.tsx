@@ -16,11 +16,11 @@ import {
   supernovaColors,
   bottomChartHeight,
 } from "./utils/chart-utils";
-import { drawTopChart } from "./utils/drawTopChart/drawTopChart";
 import classNames from "classnames";
-import { drawBottomChart } from "./utils/drawBottomChart";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
 import { axisBottom, axisLeft, line, scaleLinear, select, selectAll } from "d3";
+import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
+import { drawBottomChart } from "./utils/drawChart/drawBottomChart/drawBottomChart";
 
 interface Props {
   stockData: StockData[];

@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import { ConvertedData } from "../../../../../types";
-import { mousemove } from "../chart-utils";
+import { ConvertedData } from "../../../../../../types";
+import { mousemove } from "../../chart-utils";
 import {
   addFocusLineCirclesAndText,
   getTopChartPlottingFunctions,

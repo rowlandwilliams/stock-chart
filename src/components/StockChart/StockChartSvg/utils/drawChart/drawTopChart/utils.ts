@@ -1,11 +1,11 @@
 import { area, line, select } from "d3";
-import { ConvertedData, StockValue } from "../../../../../types";
+import { ConvertedData, StockValue } from "../../../../../../types";
 import {
   margin,
   stockKeys,
   supernovaColors,
   topChartHeight,
-} from "../chart-utils";
+} from "../../chart-utils";
 
 export const getTopChartSelections = (
   companyName: string,

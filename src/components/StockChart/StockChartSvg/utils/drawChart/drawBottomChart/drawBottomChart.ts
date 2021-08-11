@@ -10,15 +10,15 @@ import {
   select,
   selectAll,
 } from "d3";
-import { ConvertedData, StockData, StockValue } from "../../../../types";
+import { ConvertedData, StockData, StockValue } from "../../../../../../types";
 import {
   bottomChartHeight,
   margin,
   stockKeys,
   supernovaColors,
   topChartHeight,
-} from "./chart-utils";
-import { getBrushedMinMaxStock } from "./data-utils";
+} from "../../chart-utils";
+import { getBrushedMinMaxStock } from "../../data-utils";
 
 export const drawBottomChart = (
   companyName: string,
