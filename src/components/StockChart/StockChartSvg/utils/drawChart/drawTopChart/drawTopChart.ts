@@ -4,11 +4,11 @@ import { mousemove, topChartHeight } from "../../chart-utils";
 import {
   getChartPlottingFunctions,
   plotChartStockLinesAndAreas,
+  plotTopChartAxes,
 } from "../common-utils";
 import {
   addFocusLineCirclesAndText,
   getTopChartSelections,
-  plotTopChartAxes,
   updateTopChartAxesDomains,
 } from "./utils";
 

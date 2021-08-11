@@ -1,11 +1,6 @@
 import { area, line, select } from "d3";
 import { ConvertedData, StockValue } from "../../../../../../types";
-import {
-  margin,
-  stockKeys,
-  supernovaColors,
-  topChartHeight,
-} from "../../chart-utils";
+import { margin, supernovaColors, topChartHeight } from "../../chart-utils";
 
 export const getTopChartSelections = (
   companyName: string,
@@ -35,36 +30,6 @@ export const updateTopChartAxesDomains = (
   y.domain(activeStocksDomain).range([topChartHeight - margin, margin]);
 };
 
-export const plotTopChartAxes = (
-  xAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  xAxisTop: d3.Axis<d3.NumberValue | Date>,
-  yAxisTop: d3.Axis<d3.NumberValue>
-) => {
-  // transition x axis
-  xAxisGroupTop
-    .attr("transform", `translate(0, ${topChartHeight - margin})`)
-    .transition()
-    .duration(800)
-    .call(xAxisTop)
-    .attr("text-anchor", "end");
-
-  yAxisGroupTop
-    .attr("transform", `translate(0, ${0})`)
-    .transition()
-    .duration(800)
-    .call(yAxisTop)
-    .on("start", () => {
-      yAxisGroupTop.select(".domain").remove(); // remove axis line
-      yAxisGroupTop
-        .selectAll(".tick > line")
-        .attr("opacity", 0.5)
-        .style("stroke-dasharray", "5 5");
-    })
-    .selectAll("text")
-    .attr("transform", "translate(4, -8)")
-    .attr("text-anchor", "start");
-};
 
 
 const chartBackgroundColor = "#1a1b3e";
