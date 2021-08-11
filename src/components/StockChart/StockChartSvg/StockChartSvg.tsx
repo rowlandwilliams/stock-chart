@@ -14,6 +14,7 @@ import {
   svgHeight,
   stockKeys,
   supernovaColors,
+  bottomChartHeight,
 } from "./utils/chart-utils";
 import { drawTopChart } from "./utils/drawTopChart/drawTopChart";
 import classNames from "classnames";
@@ -65,26 +66,21 @@ export const StockChartSvg = ({
 
   // each time time period button is clicked transition lines
   useEffect(() => {
-    // prevent svg being loaded until parent width has been set
     const topChartGroup = select<SVGSVGElement, unknown>(
       `#top-chart-group-${companyName}`
     );
     const bottomChartGroup = select<SVGSVGElement, unknown>(
       `#bottom-chart-group-${companyName}`
     );
-
     const xAxisGroup = topChartGroup.select<SVGSVGElement>(
       `#x-axis-${companyName}`
     );
-
     const yAxisGroup = topChartGroup.select<SVGSVGElement>(
       `#y-axis-${companyName}`
     );
-
     const linesGroup = topChartGroup.select<SVGSVGElement>(
       `#lines-${companyName}`
     );
-
     const areaGroup = topChartGroup.select(`#area-${companyName}`);
 
     // determine latest date
@@ -179,12 +175,15 @@ export const StockChartSvg = ({
             <LinearGradient
               gradientId={stockKey + "-top"}
               gradientColor={supernovaColors[i]}
+              isTopChart
+              chartHeight={topChartHeight}
             />
           ))}
           {stockKeys.map((stockKey, i) => (
             <LinearGradient
               gradientId={stockKey + "-bottom"}
               gradientColor={supernovaColors[i]}
+              chartHeight={bottomChartHeight}
             />
           ))}
         </defs>
@@ -213,13 +212,6 @@ export const StockChartSvg = ({
             <line></line>
             <rect></rect>
           </g>
-          <rect
-            width="100%"
-            height="100%"
-            id={`overlay-${companyName}`}
-            pointerEvents="all"
-            fill="none"
-          ></rect>
         </g>
         <g
           id={`bottom-chart-group-${companyName}`}

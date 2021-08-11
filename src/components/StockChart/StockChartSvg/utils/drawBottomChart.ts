@@ -65,7 +65,6 @@ export const drawBottomChart = (
   xBottomArea.range([0, width / 2]);
 
   //[xBottom(activeDatesDomain[0]), xBottom(activeDatesDomain[1])]);
-  console.log(xBottom(activeDatesDomain[1]) - xBottom(activeDatesDomain[0]));
 
   // define brush function for bottom graph
   var brush: any = brushX()
@@ -74,7 +73,40 @@ export const drawBottomChart = (
       [0, 0],
       [width, bottomChartHeight - margin],
     ]) // upon brush change, update top chart
-    .on("brush", (event) =>
+    .on("brush", (event) => {
+      // get extent of brush selection
+      const selection = { event };
+      const extent = selection.event.selection;
+
+      if (!extent) return;
+
+      // calculate new dates domain based on brushed dates
+      const brushedDatesDomain = extent.map((x: number) =>
+        xBottom.invert(x).getTime()
+      );
+
+      // update top chart x axis with new domain
+      xTop.domain(brushedDatesDomain);
+
+      // calculate new stocks domain based on brushed dates
+      const brushedStocksDomain = getBrushedMinMaxStock(
+        stockData,
+        brushedDatesDomain[1],
+        brushedDatesDomain[0]
+      );
+
+      const clipLeft = select("#area-crop-left > rect");
+      clipLeft
+        .attr(
+          "width",
+          xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
+        )
+        .attr("x", xBottom(brushedDatesDomain[0]));
+
+      // update top chart y axis with new domain
+      yTop.domain(brushedStocksDomain);
+    })
+    .on("end", (event) =>
       updateTopChart(
         event,
         xBottom,
