@@ -19,6 +19,7 @@ import {
   topChartHeight,
 } from "../../chart-utils";
 import { getBrushedMinMaxStock } from "../../data-utils";
+import { getBottomChartScalesAndAxes, getBottomChartSelections } from "./utils";
 
 export const drawBottomChart = (
   companyName: string,
@@ -38,23 +39,14 @@ export const drawBottomChart = (
   activeDatesDomain: number[],
   areaGroupTop: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
 ) => {
-  const xAxisGroupBottom = bottomChartGroup.select<SVGSVGElement>(
-    `#x-axis-${companyName}`
-  );
-  const linesGroupBottom = bottomChartGroup.selectAll(`#lines-${companyName}`);
-  const areaGroupBottom = bottomChartGroup.selectAll(`#area-${companyName}`);
-  const brushGroup = bottomChartGroup.select<SVGSVGElement>(
-    `#brush-${companyName}`
-  );
+  const { xAxisGroupBottom, linesGroupBottom, areaGroupBottom, brushGroup } =
+    getBottomChartSelections(companyName, bottomChartGroup);
 
-  // define x and y scale for bottom graph
-  const xBottom = scaleTime().domain(fullDatesDomain).range([0, width]);
-  const yBottom = scaleLinear()
-    .domain(fullStocksDomain)
-    .range([bottomChartHeight - margin, margin]);
-
-  // define x axis for bottom graph
-  const xAxisBottom = axisBottom(xBottom).tickSize(0);
+  const { xBottom, yBottom, xAxisBottom } = getBottomChartScalesAndAxes(
+    fullDatesDomain,
+    fullStocksDomain,
+    width
+  );
 
   // plot bottom x axis
   xAxisGroupBottom
