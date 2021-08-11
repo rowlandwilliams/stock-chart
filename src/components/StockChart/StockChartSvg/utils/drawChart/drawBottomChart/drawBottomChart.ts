@@ -19,6 +19,7 @@ import {
   topChartHeight,
 } from "../../chart-utils";
 import { getBrushedMinMaxStock } from "../../data-utils";
+import { getChartPlottingFunctions } from "../common-utils";
 import { getBottomChartScalesAndAxes, getBottomChartSelections } from "./utils";
 
 export const drawBottomChart = (
@@ -57,6 +58,13 @@ export const drawBottomChart = (
   xBottomArea.range([0, width / 2]);
 
   //[xBottom(activeDatesDomain[0]), xBottom(activeDatesDomain[1])]);
+
+  // define line and area functions
+  const { plotStockLines, plotStockArea } = getChartPlottingFunctions(
+    xBottom,
+    yBottom,
+    bottomChartHeight - margin
+  );
 
   // define brush function for bottom graph
   var brush: any = brushX()
@@ -143,7 +151,7 @@ export const drawBottomChart = (
     .attr("stroke-width", "0.5px")
     .transition()
     .duration(800)
-    .attr("d", (d) => plotLinesBottom(d.values));
+    .attr("d", (d) => plotStockLines(d.values));
 
   const plotAreaBottom = area<StockValue>()
     .x((d) => xBottom(d.date))
@@ -158,7 +166,7 @@ export const drawBottomChart = (
     .attr("stroke-width", 0)
     .transition()
     .duration(800)
-    .attr("d", (d) => plotAreaBottom(d.values));
+    .attr("d", (d) => plotStockArea(d.values));
 
   selectAll(".domain").remove();
 };
