@@ -48,7 +48,7 @@ export const updateBrushOnMove = (
   brushGroup
     .call(brush as any)
     .transition()
-    .duration(800)
+    // .duration(800)
     .call(brush.move as any, [
       xBottom(activeDatesDomain[0]),
       xBottom(activeDatesDomain[1]),
@@ -57,7 +57,6 @@ export const updateBrushOnMove = (
     .attr("fill", brushColor)
     .attr("stroke", brushColor);
 
-  // brushGroup.select(".overlay").datum({ type: "selection" });
 };
 
 export const updateBottomAreaWhileBrushing = (

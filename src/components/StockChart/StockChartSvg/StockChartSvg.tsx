@@ -90,14 +90,6 @@ export const StockChartSvg = ({
       `#area-${companyName}`
     );
 
-    select("#chart-container")
-      .on("mouseover", () =>
-        selectAll(".tick").transition().duration(500).attr("opacity", 0.8)
-      )
-      .on("mouseleave", () =>
-        selectAll(".tick").transition().duration(500).attr("opacity", 0)
-      );
-
     // determine latest date
     const latestDate = stockData.slice(-1)[0].date;
 

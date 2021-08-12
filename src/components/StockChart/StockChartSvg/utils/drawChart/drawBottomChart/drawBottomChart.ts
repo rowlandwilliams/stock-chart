@@ -73,7 +73,7 @@ export const drawBottomChart = (
     .on("brush", (event) => {
       updateBottomAreaWhileBrushing(event, xBottom);
     })
-    .on("end", (event) =>
+    .on("brush end", (event) =>
       updateTopChart(
         event,
         xBottom,
@@ -103,6 +103,4 @@ export const drawBottomChart = (
     linesGroupBottom,
     plotStockLines
   );
-
-  selectAll(".domain").remove();
 };
