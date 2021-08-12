@@ -1,12 +1,6 @@
-import {
-  axisBottom,
-  pointer,
-  scaleLinear,
-  ScaleTime,
-  scaleTime,
-  Selection,
-} from "d3";
+import { axisBottom, scaleLinear, ScaleTime, scaleTime, Selection } from "d3";
 import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
+import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
 
 export const getBottomChartSelections = (
   companyName: string,
@@ -64,4 +58,17 @@ export const updateBrushOnMove = (
     .attr("stroke", brushColor);
 
   // brushGroup.select(".overlay").datum({ type: "selection" });
+};
+
+export const updateBottomAreaWhileBrushing = (
+  event: any,
+  xBottom: ScaleTime<number, number, never>
+) => {
+  const selection = { event };
+  var extent = selection.event.selection;
+  if (!extent) return;
+  const brushedDatesDomain = extent.map((x: number) =>
+    xBottom.invert(x).getTime()
+  );
+  clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
 };

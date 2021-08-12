@@ -15,6 +15,7 @@ import {
   stockKeys,
   supernovaColors,
   bottomChartHeight,
+  chartBackgroudColor,
 } from "./utils/chart-utils";
 import classNames from "classnames";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
@@ -155,8 +156,6 @@ export const StockChartSvg = ({
       areaGroup,
       offsetLeft
     );
-
-    selectAll(".domain").remove();
   });
 
   const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
@@ -225,6 +224,11 @@ export const StockChartSvg = ({
           id={`bottom-chart-group-${companyName}`}
           transform={`translate(0,${topChartHeight + margin * 2})`}
         >
+          <rect
+            width="100%"
+            height={bottomChartHeight}
+            fill={chartBackgroudColor}
+          ></rect>
           <g id={`x-axis-${companyName}`}></g>
           <g id={`y-axis-${companyName}`}></g>
           <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>

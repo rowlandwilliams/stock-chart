@@ -1,6 +1,5 @@
 import * as d3 from "d3";
-import { ConvertedData, TimeLabel } from "../../../../types";
-import randomColor from "randomcolor";
+import { TimeLabel } from "../../../../types";
 
 export const margin = 20;
 
@@ -19,21 +18,7 @@ export const supernovaColors = [
 ].reverse();
 
 export const brushColor = "#383862";
-
-// [...Array(4)].map(
-//   (x) =>
-//     randomColor({
-//       luminosity: "light",
-//       format: "rgb",
-//     }) as string
-// );
-
-// // [
-//   "#FF715B",
-//   "#E9FEA5",
-//   "#E0D9FE",
-//   "#52a866",
-// ].reverse();
+export const chartBackgroudColor = "#1a1b3e";
 
 export const capitalizeString = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

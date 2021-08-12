@@ -15,7 +15,6 @@ import {
 
 export const updateTopChart = (
   event: any,
-  touch: any,
   xBottom: ScaleTime<number, number, never>,
   stockData: StockData[],
   xAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
@@ -34,14 +33,9 @@ export const updateTopChart = (
 ) => {
   // get extent of brush selection
   const selection = { event };
-  const { sourceEvent } = event;
   var extent = selection.event.selection;
 
-  if (sourceEvent && sourceEvent.type === "touchend") return;
-
   if (!extent) {
-    // return;
-    // touch;
     extent = getNewViewExtentOnBrushClick(event, offsetLeft, svgWidth);
 
     const brushedDatesDomain = extent.map((x: number) =>
@@ -56,7 +50,6 @@ export const updateTopChart = (
     xBottom.invert(x).getTime()
   );
 
-  console.log("here");
   // clip the shaded under bottom chart line to brush
   clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
 

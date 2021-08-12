@@ -1,4 +1,4 @@
-import { area, line } from "d3";
+import { area, line, selectAll, timeWeek } from "d3";
 import { ConvertedData, StockValue } from "../../../../../types";
 import {
   margin,
@@ -63,11 +63,12 @@ export const plotTopChartAxes = (
   yAxisTop: d3.Axis<d3.NumberValue>
 ) => {
   // transition x axis
+
   xAxisGroupTop
     .attr("transform", `translate(0, ${topChartHeight - margin})`)
     .transition()
     .duration(800)
-    .call(xAxisTop)
+    .call(xAxisTop.ticks(5))
     .attr("text-anchor", "end");
 
   yAxisGroupTop

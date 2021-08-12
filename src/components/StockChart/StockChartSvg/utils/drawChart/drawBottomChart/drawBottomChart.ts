@@ -1,6 +1,11 @@
 import { brushX, scaleTime, select, selectAll } from "d3";
 import { ConvertedData, StockData } from "../../../../../../types";
-import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
+import {
+  bottomChartHeight,
+  brushColor,
+  margin,
+  topChartHeight,
+} from "../../chart-utils";
 import { getBrushedMinMaxStock } from "../../data-utils";
 import {
   getChartPlottingFunctions,
@@ -11,6 +16,7 @@ import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
 import {
   getBottomChartScalesAndAxes,
   getBottomChartSelections,
+  updateBottomAreaWhileBrushing,
   updateBrushOnMove,
 } from "./utils";
 
@@ -64,10 +70,12 @@ export const drawBottomChart = (
       [0, 0],
       [width, bottomChartHeight - margin],
     ]) // upon brush change, update top chart
-    .on("brush end", (event, touch) =>
+    .on("brush", (event) => {
+      updateBottomAreaWhileBrushing(event, xBottom);
+    })
+    .on("end", (event) =>
       updateTopChart(
         event,
-        touch,
         xBottom,
         stockData,
         xAxisGroupTop,
