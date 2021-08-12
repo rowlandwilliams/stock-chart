@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { select } from "d3";
 import { ConvertedData } from "../../../../../../types";
 import { mousemove, topChartHeight } from "../../chart-utils";
 import {
@@ -70,7 +71,6 @@ export const drawTopChart = (
   // add focus lines and tooltip
   addFocusLineCirclesAndText(focusLine, focusCircles, convertedData, focusText);
 
-  // define top chart interaction
   topChartGroup
     .on("mouseenter", () => {
       focusGroup.attr("stroke-opacity", 1).attr("opacity", 1);

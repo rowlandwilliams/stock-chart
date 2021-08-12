@@ -17,7 +17,6 @@ import {
   bottomChartHeight,
   chartBackgroudColor,
 } from "./utils/chart-utils";
-import classNames from "classnames";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
 import { axisBottom, axisLeft, line, scaleLinear, select, selectAll } from "d3";
 import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
@@ -27,14 +26,12 @@ interface Props {
   stockData: StockData[];
   activeTimeLabelObject: TimeLabel;
   companyName: string;
-  chartIsHovered: boolean;
 }
 
 export const StockChartSvg = ({
   stockData,
   activeTimeLabelObject,
   companyName,
-  chartIsHovered,
 }: Props) => {
   // define ref for parent container
   const parentRef = useRef<HTMLInputElement>(null);
@@ -48,6 +45,8 @@ export const StockChartSvg = ({
 
   const fullDatesDomain = getFullDatesDomain(stockData);
   const fullStocksDomain = getFullStockDomain(stockData);
+
+  // determine latest date
 
   //on page load set svg height
   useEffect(() => {
@@ -91,6 +90,14 @@ export const StockChartSvg = ({
       `#area-${companyName}`
     );
 
+    select("#chart-container")
+      .on("mouseover", () =>
+        selectAll(".tick").transition().duration(500).attr("opacity", 0.8)
+      )
+      .on("mouseleave", () =>
+        selectAll(".tick").transition().duration(500).attr("opacity", 0)
+      );
+
     // determine latest date
     const latestDate = stockData.slice(-1)[0].date;
 
@@ -100,6 +107,8 @@ export const StockChartSvg = ({
       latestDate,
       activeTimeLabelObject
     );
+
+    // setVisibleDatesDomain(activeDatesDomain);
 
     // calculate stocks domain for y axis scaling
     const activeStocksDomain = getActiveMinMaxStock(
@@ -115,8 +124,6 @@ export const StockChartSvg = ({
     // define x axis
     const xAxis = axisBottom(x).tickSize(0);
     const yAxis = axisLeft(y).tickSize(-width).ticks(5);
-
-    // getAxisLabels(activeTimeLabelObject, xAxis);
 
     // draw lines
     drawTopChart(
@@ -158,16 +165,8 @@ export const StockChartSvg = ({
     );
   });
 
-  const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
-    classNames("text-white text-opacity-50 transition duration-150", {
-      "opacity-1":
-        chartIsHovered || (controlLineOpacityOnHover && !chartIsHovered),
-      "opacity-80": chartIsHovered && controlLineOpacityOnHover,
-      "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
-    });
-
   return (
-    <div className="w-full" ref={parentRef} id="chart-container">
+    <div className="w-full" ref={parentRef}>
       <svg
         width="100%"
         height={svgHeight}
@@ -199,23 +198,11 @@ export const StockChartSvg = ({
           height={topChartHeight}
           transform={`translate(0,${margin})`}
         >
-          <g
-            id={`x-axis-${companyName}`}
-            className={getClassFromChartHover()}
-          ></g>
-          <g
-            id={`y-axis-${companyName}`}
-            className={getClassFromChartHover()}
-          ></g>
-          <g
-            id={`area-${companyName}`}
-            className={getClassFromChartHover(true)}
-          ></g>
-          <g
-            id={`lines-${companyName}`}
-            className={getClassFromChartHover(true)}
-          ></g>
-          <g id={`focus-${companyName}`} className={getClassFromChartHover()}>
+          <g id={`x-axis-${companyName}`} className="opacity-80"></g>
+          <g id={`y-axis-${companyName}`} className="opacity-80"></g>
+          <g id={`area-${companyName}`}></g>
+          <g id={`lines-${companyName}`}></g>
+          <g id={`focus-${companyName}`}>
             <line></line>
             <rect></rect>
           </g>
@@ -229,14 +216,10 @@ export const StockChartSvg = ({
             height={bottomChartHeight}
             fill={chartBackgroudColor}
           ></rect>
-          <g
-            id={`x-axis-${companyName}`}
-            className={getClassFromChartHover()}
-          ></g>
-          <g id={`y-axis-${companyName}`}></g>
+          <g id={`x-axis-${companyName}`} className="opacity-80"></g>
+          <g id={`y-axis-${companyName}`} className="opacity-80"></g>
           <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
           <g id={`lines-${companyName}`}></g>
-
           <g id={`brush-${companyName}`}></g>
         </g>
       </svg>

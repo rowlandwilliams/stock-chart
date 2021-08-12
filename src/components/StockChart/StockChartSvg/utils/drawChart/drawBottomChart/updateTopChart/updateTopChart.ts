@@ -30,6 +30,7 @@ export const updateTopChart = (
   svgWidth: number,
   areaGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   offsetLeft: number
+  // setVisibleDatesDomain:
 ) => {
   // get extent of brush selection
   const selection = { event };

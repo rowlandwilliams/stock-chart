@@ -11,8 +11,6 @@ interface Props {
 }
 
 export const StockChart = ({ companyName }: Props) => {
-  const [chartIsHovered, setChartIsHovered] = useState(false);
-
   // define company data based on provided company name
   const stockData = companyStockData[companyName].map((stockObj) => ({
     ...stockObj,
@@ -31,8 +29,7 @@ export const StockChart = ({ companyName }: Props) => {
   return (
     <div
       className="block mx-auto max-w-4xl p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
-      onMouseEnter={() => setChartIsHovered(true)}
-      onMouseLeave={() => setChartIsHovered(false)}
+      id="chart-container"
     >
       <div className="flex justify-between">
         <div>{capitalizeString(companyName)}</div>
@@ -45,7 +42,6 @@ export const StockChart = ({ companyName }: Props) => {
         stockData={stockData}
         activeTimeLabelObject={activeTimeLabelObject}
         companyName={companyName}
-        chartIsHovered={chartIsHovered}
       />
     </div>
   );

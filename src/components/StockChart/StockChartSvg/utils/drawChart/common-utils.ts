@@ -68,7 +68,7 @@ export const plotTopChartAxes = (
     .attr("transform", `translate(0, ${topChartHeight - margin})`)
     .transition()
     .duration(800)
-    .call(xAxisTop.ticks(5))
+    .call(xAxisTop)
     .attr("text-anchor", "end");
 
   yAxisGroupTop
