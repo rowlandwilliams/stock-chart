@@ -1,5 +1,12 @@
-import { axisBottom, scaleLinear, scaleTime } from "d3";
-import { bottomChartHeight, margin } from "../../chart-utils";
+import {
+  axisBottom,
+  pointer,
+  scaleLinear,
+  ScaleTime,
+  scaleTime,
+  Selection,
+} from "d3";
+import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
 
 export const getBottomChartSelections = (
   companyName: string,
@@ -34,4 +41,27 @@ export const getBottomChartScalesAndAxes = (
       .range([bottomChartHeight - margin, margin]),
     xAxisBottom: axisBottom(xBottom).tickSize(0),
   };
+};
+
+export const updateBrushOnMove = (
+  brushGroup: Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  brush: any,
+  xBottom: ScaleTime<number, number, never>,
+  activeDatesDomain: number[],
+  width: number
+) => {
+  // call brush function and set initial position / position on time label click
+  brushGroup
+    .call(brush as any)
+    .transition()
+    .duration(800)
+    .call(brush.move as any, [
+      xBottom(activeDatesDomain[0]),
+      xBottom(activeDatesDomain[1]),
+    ])
+    .select(".selection") // color brush
+    .attr("fill", brushColor)
+    .attr("stroke", brushColor);
+
+  // brushGroup.select(".overlay").datum({ type: "selection" });
 };

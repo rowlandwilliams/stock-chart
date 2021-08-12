@@ -40,6 +40,7 @@ export const StockChartSvg = ({
 
   // set intial width of svg container
   const [width, setWidth] = useState(0);
+  const [offsetLeft, setOffsetLeft] = useState(0);
 
   // convert data to required format
   const convertedData = convertStockDataForChart(stockData);
@@ -50,16 +51,20 @@ export const StockChartSvg = ({
   //on page load set svg height
   useEffect(() => {
     const { current } = parentRef;
-
     if (current) {
       setWidth(current.offsetWidth);
+      setOffsetLeft(current.offsetLeft);
 
       // add resize listener
-      window.addEventListener("resize", () => setWidth(current.offsetWidth));
+      window.addEventListener("resize", () => {
+        setWidth(current.offsetWidth);
+        setOffsetLeft(current.offsetLeft);
+      });
       return () => {
-        window.removeEventListener("resize", () =>
-          setWidth(current.offsetWidth)
-        );
+        window.removeEventListener("resize", () => {
+          setWidth(current.offsetWidth);
+          setOffsetLeft(current.offsetLeft);
+        });
       };
     }
   }, [parentRef]);
@@ -81,7 +86,9 @@ export const StockChartSvg = ({
     const linesGroup = topChartGroup.select<SVGSVGElement>(
       `#lines-${companyName}`
     );
-    const areaGroup = topChartGroup.select(`#area-${companyName}`);
+    const areaGroup = topChartGroup.select<SVGSVGElement>(
+      `#area-${companyName}`
+    );
 
     // determine latest date
     const latestDate = stockData.slice(-1)[0].date;
@@ -145,7 +152,8 @@ export const StockChartSvg = ({
       yAxisGroup,
       yAxis,
       activeDatesDomain,
-      areaGroup
+      areaGroup,
+      offsetLeft
     );
 
     selectAll(".domain").remove();
@@ -168,7 +176,7 @@ export const StockChartSvg = ({
         pointerEvents="all"
       >
         <clipPath id="area-crop-left" pointerEvents="all">
-          <rect height="100%"></rect>
+          <rect height={svgHeight - margin * 2} rx="4" ry="4" fill="red"></rect>
         </clipPath>
         <defs>
           {stockKeys.map((stockKey, i) => (

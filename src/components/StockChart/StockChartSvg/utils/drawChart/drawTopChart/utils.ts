@@ -30,8 +30,6 @@ export const updateTopChartAxesDomains = (
   y.domain(activeStocksDomain).range([topChartHeight - margin, margin]);
 };
 
-
-
 const chartBackgroundColor = "#1a1b3e";
 
 export const addFocusLineCirclesAndText = (

@@ -3,8 +3,8 @@ import { ConvertedData } from "../../../../../../types";
 import { mousemove, topChartHeight } from "../../chart-utils";
 import {
   getChartPlottingFunctions,
-  plotChartStockLinesAndAreas,
   plotTopChartAxes,
+  plotTopChartStockLinesAndAreas,
 } from "../common-utils";
 import {
   addFocusLineCirclesAndText,
@@ -59,7 +59,7 @@ export const drawTopChart = (
   plotTopChartAxes(xAxisGroupTop, yAxisGroupTop, xAxisTop, yAxisTop);
 
   // plot lines and areas for stock data
-  plotChartStockLinesAndAreas(
+  plotTopChartStockLinesAndAreas(
     areaGroup,
     convertedData,
     plotStockArea,

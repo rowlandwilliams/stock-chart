@@ -1,30 +1,18 @@
-import {
-  area,
-  axisBottom,
-  BrushBehavior,
-  brushX,
-  line,
-  scaleLinear,
-  ScaleTime,
-  scaleTime,
-  select,
-  selectAll,
-} from "d3";
-import { ConvertedData, StockData, StockValue } from "../../../../../../types";
-import {
-  bottomChartHeight,
-  margin,
-  stockKeys,
-  supernovaColors,
-  topChartHeight,
-} from "../../chart-utils";
+import { brushX, scaleTime, select, selectAll } from "d3";
+import { ConvertedData, StockData } from "../../../../../../types";
+import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
 import { getBrushedMinMaxStock } from "../../data-utils";
 import {
   getChartPlottingFunctions,
-  plotChartStockLinesAndAreas,
+  plotTopChartStockLinesAndAreas,
 } from "../common-utils";
 import { updateTopChart } from "./updateTopChart/updateTopChart";
-import { getBottomChartScalesAndAxes, getBottomChartSelections } from "./utils";
+import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
+import {
+  getBottomChartScalesAndAxes,
+  getBottomChartSelections,
+  updateBrushOnMove,
+} from "./utils";
 
 export const drawBottomChart = (
   companyName: string,
@@ -42,7 +30,8 @@ export const drawBottomChart = (
   yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   yAxisTop: d3.Axis<d3.NumberValue>,
   activeDatesDomain: number[],
-  areaGroupTop: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+  areaGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  offsetLeft: number
 ) => {
   const { xAxisGroupBottom, linesGroupBottom, areaGroupBottom, brushGroup } =
     getBottomChartSelections(companyName, bottomChartGroup);
@@ -75,42 +64,10 @@ export const drawBottomChart = (
       [0, 0],
       [width, bottomChartHeight - margin],
     ]) // upon brush change, update top chart
-    .on("brush", (event) => {
-      // get extent of brush selection
-      const selection = { event };
-      const extent = selection.event.selection;
-
-      if (!extent) return;
-
-      // calculate new dates domain based on brushed dates
-      const brushedDatesDomain = extent.map((x: number) =>
-        xBottom.invert(x).getTime()
-      );
-
-      // update top chart x axis with new domain
-      xTop.domain(brushedDatesDomain);
-
-      // calculate new stocks domain based on brushed dates
-      const brushedStocksDomain = getBrushedMinMaxStock(
-        stockData,
-        brushedDatesDomain[1],
-        brushedDatesDomain[0]
-      );
-
-      const clipLeft = select("#area-crop-left > rect");
-      clipLeft
-        .attr(
-          "width",
-          xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
-        )
-        .attr("x", xBottom(brushedDatesDomain[0]));
-
-      // update top chart y axis with new domain
-      yTop.domain(brushedStocksDomain);
-    })
-    .on("end", (event) =>
+    .on("brush end", (event, touch) =>
       updateTopChart(
         event,
+        touch,
         xBottom,
         stockData,
         xAxisGroupTop,
@@ -124,21 +81,14 @@ export const drawBottomChart = (
         brushGroup,
         brush,
         width,
-        areaGroupTop
+        areaGroupTop,
+        offsetLeft
       )
     );
 
-  // call brush function and set initial position / position on time label click
-  brushGroup
-    .call(brush as any)
-    .transition()
-    .duration(800)
-    .call(brush.move as any, [
-      xBottom(activeDatesDomain[0]),
-      xBottom(activeDatesDomain[1]),
-    ]);
+  updateBrushOnMove(brushGroup, brush, xBottom, activeDatesDomain, width);
 
-  plotChartStockLinesAndAreas(
+  plotTopChartStockLinesAndAreas(
     areaGroupBottom,
     convertedData,
     plotStockArea,

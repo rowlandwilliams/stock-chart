@@ -1,4 +1,4 @@
-import { ScaleLinear, ScaleTime, select } from "d3";
+import { pointer, ScaleLinear, ScaleTime, select } from "d3";
 import { plotTopChartAxes } from "../../common-utils";
 
 export const updateTopChartAxesFromBrush = (
@@ -30,4 +30,19 @@ export const clipBottomChartAreaToBrush = (
       xBottom(brushedDatesDomain[1]) - xBottom(brushedDatesDomain[0])
     )
     .attr("x", xBottom(brushedDatesDomain[0]));
+};
+
+export const getNewViewExtentOnBrushClick = (
+  event: any,
+  offsetLeft: number,
+  svgWidth: number
+) => {
+  const xPointer = pointer(event)[0] - offsetLeft;
+  const viewWidth = 100;
+
+  if (xPointer < viewWidth / 2) return [0, viewWidth];
+  if (xPointer > svgWidth - viewWidth / 2)
+    return [svgWidth - viewWidth, svgWidth];
+
+  return [xPointer - viewWidth / 2, xPointer + viewWidth / 2];
 };

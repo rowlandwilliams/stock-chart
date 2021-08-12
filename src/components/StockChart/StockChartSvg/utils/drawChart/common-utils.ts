@@ -23,7 +23,7 @@ export const getChartPlottingFunctions = (
   };
 };
 
-export const plotChartStockLinesAndAreas = (
+export const plotTopChartStockLinesAndAreas = (
   areaGroup:
     | d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     | d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,

@@ -18,6 +18,8 @@ export const supernovaColors = [
   "#0092f4",
 ].reverse();
 
+export const brushColor = "#383862";
+
 // [...Array(4)].map(
 //   (x) =>
 //     randomColor({
@@ -152,7 +154,7 @@ export const mousemove = (
 
     focusTextRects
       .attr("rx", 2)
-      .attr("fill", "#383862")
+      .attr("fill", brushColor)
       .attr("width", maxTextWidth)
       .attr("height", "80px")
       .attr("transform", (d: any, i) =>
