@@ -229,7 +229,10 @@ export const StockChartSvg = ({
             height={bottomChartHeight}
             fill={chartBackgroudColor}
           ></rect>
-          <g id={`x-axis-${companyName}`}></g>
+          <g
+            id={`x-axis-${companyName}`}
+            className={getClassFromChartHover()}
+          ></g>
           <g id={`y-axis-${companyName}`}></g>
           <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
           <g id={`lines-${companyName}`}></g>
