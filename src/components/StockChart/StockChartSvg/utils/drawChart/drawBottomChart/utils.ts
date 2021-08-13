@@ -1,4 +1,8 @@
 import { axisBottom, scaleLinear, ScaleTime, scaleTime, Selection } from "d3";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { store } from "../../../../../..";
+import { changeVisibleDatesDomain } from "../../../../../../actions";
 import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
 import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
 
@@ -56,7 +60,6 @@ export const updateBrushOnMove = (
     .select(".selection") // color brush
     .attr("fill", brushColor)
     .attr("stroke", brushColor);
-
 };
 
 export const updateBottomAreaWhileBrushing = (
@@ -69,5 +72,7 @@ export const updateBottomAreaWhileBrushing = (
   const brushedDatesDomain = extent.map((x: number) =>
     xBottom.invert(x).getTime()
   );
+
   clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
+  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
 };

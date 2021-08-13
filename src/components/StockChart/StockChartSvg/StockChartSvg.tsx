@@ -18,24 +18,29 @@ import {
   chartBackgroudColor,
 } from "./utils/chart-utils";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
-import { axisBottom, axisLeft, line, scaleLinear, select } from "d3";
+import { axisBottom, axisLeft, line, scaleLinear, select, selectAll } from "d3";
 import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
 import { drawBottomChart } from "./utils/drawChart/drawBottomChart/drawBottomChart";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../reducers";
+import { changeVisibleDatesDomain } from "../../../actions";
+import classNames from "classnames";
 
 interface Props {
   stockData: StockData[];
   activeTimeLabelObject: TimeLabel;
   companyName: string;
   latestDate: number;
+  // chartIsHovered: boolean;
 }
 
 export const StockChartSvg = ({
   stockData,
   activeTimeLabelObject,
   companyName,
-}: Props) => {
+  latestDate,
+}: // chartIsHovered,
+Props) => {
   // define ref for parent container
   const parentRef = useRef<HTMLInputElement>(null);
 
@@ -55,6 +60,7 @@ export const StockChartSvg = ({
 
   console.log(visibleDatesDomain);
   const dispatch = useDispatch();
+
   // determine latest date
 
   //on page load set svg height
@@ -100,7 +106,6 @@ export const StockChartSvg = ({
     );
 
     // determine latest date
-    const latestDate = stockData.slice(-1)[0].date;
 
     // calculate dates domain based on activeTimeLabelObject (the time button which is clicked e.g 1W, 1M ...)
     const activeDatesDomain = getActiveDatesDomain(
@@ -126,6 +131,7 @@ export const StockChartSvg = ({
     const xAxis = axisBottom(x).tickSize(0);
     const yAxis = axisLeft(y).tickSize(-width).ticks(5);
 
+    console.log("plotting");
     // draw lines
     drawTopChart(
       xAxisGroup,
@@ -166,6 +172,20 @@ export const StockChartSvg = ({
     );
   });
 
+  useEffect(() => {
+    select("#chart-container")
+      .on("mouseover", () => selectAll(".tick").attr("opacity", 1))
+      .on("mouseout", () => selectAll(".tick").attr("opacity", 0));
+  });
+
+  // const getClassFromChartHover = (controlLineOpacityOnHover: boolean = false) =>
+  //   classNames("text-white text-opacity-50 transition duration-150", {
+  //     "opacity-1":
+  //       chartIsHovered || (controlLineOpacityOnHover && !chartIsHovered),
+  //     "opacity-80": chartIsHovered && controlLineOpacityOnHover,
+  //     "opacity-0": !chartIsHovered && !controlLineOpacityOnHover,
+  //   });
+
   return (
     <div className="w-full" ref={parentRef}>
       <svg
@@ -199,8 +219,15 @@ export const StockChartSvg = ({
           height={topChartHeight}
           transform={`translate(0,${margin})`}
         >
-          <g id={`x-axis-${companyName}`} className="opacity-80"></g>
-          <g id={`y-axis-${companyName}`} className="opacity-80"></g>
+          <g
+            id={`x-axis-${companyName}`}
+            // className="opacity-0"
+            // className={getClassFromChartHover()}
+          ></g>
+          <g
+            id={`y-axis-${companyName}`}
+            // className={getClassFromChartHover()}
+          ></g>
           <g id={`area-${companyName}`}></g>
           <g id={`lines-${companyName}`}></g>
           <g id={`focus-${companyName}`}>

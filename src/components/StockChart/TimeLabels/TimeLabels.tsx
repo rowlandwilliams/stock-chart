@@ -17,9 +17,7 @@ export const TimeLabels = ({
   latestDate,
 }: Props) => {
   const dispatch = useDispatch();
-  const visibleDatesDomain = useSelector(
-    (state: RootState) => state.visibleDatesDomain
-  );
+  
   return (
     <div className="flex">
       {timeLabels.map((labelObject) => (

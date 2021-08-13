@@ -1,4 +1,6 @@
 import { brushX, scaleTime, select, selectAll } from "d3";
+import { store } from "../../../../../..";
+import { changeVisibleDatesDomain } from "../../../../../../actions";
 import { ConvertedData, StockData } from "../../../../../../types";
 import {
   bottomChartHeight,
@@ -12,7 +14,10 @@ import {
   plotTopChartStockLinesAndAreas,
 } from "../common-utils";
 import { updateTopChart } from "./updateTopChart/updateTopChart";
-import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
+import {
+  clipBottomChartAreaToBrush,
+  getNewViewExtentOnBrushClick,
+} from "./updateTopChart/utils";
 import {
   getBottomChartScalesAndAxes,
   getBottomChartSelections,
@@ -73,7 +78,7 @@ export const drawBottomChart = (
     .on("brush", (event) => {
       updateBottomAreaWhileBrushing(event, xBottom);
     })
-    .on("brush end", (event) =>
+    .on("end", (event) => {
       updateTopChart(
         event,
         xBottom,
@@ -91,8 +96,8 @@ export const drawBottomChart = (
         width,
         areaGroupTop,
         offsetLeft
-      )
-    );
+      );
+    });
 
   updateBrushOnMove(brushGroup, brush, xBottom, activeDatesDomain, width);
 

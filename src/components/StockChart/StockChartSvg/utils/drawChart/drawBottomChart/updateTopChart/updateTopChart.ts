@@ -1,4 +1,6 @@
 import { BrushBehavior, ScaleTime } from "d3";
+import { store } from "../../../../../../..";
+import { changeVisibleDatesDomain } from "../../../../../../../actions";
 import { ConvertedData, StockData } from "../../../../../../../types";
 import { margin, topChartHeight } from "../../../chart-utils";
 import { getBrushedMinMaxStock } from "../../../data-utils";
@@ -50,7 +52,18 @@ export const updateTopChart = (
     xBottom.invert(x).getTime()
   );
 
-  // clip the shaded under bottom chart line to brush
+  const { sourceEvent } = event;
+
+  if (sourceEvent) {
+    store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
+  }
+  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
+
+  // console.log(store.getState().visibleDatesDomain, "here ye");
+
+  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
+
+  //clip the shaded under bottom chart line to brush
   clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
 
   // calculate new stocks domain based on brushed dates
