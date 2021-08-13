@@ -52,11 +52,6 @@ export const updateTopChart = (
     xBottom.invert(x).getTime()
   );
 
-  const { sourceEvent } = event;
-
-  if (sourceEvent) {
-    store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
-  }
   // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
 
   // console.log(store.getState().visibleDatesDomain, "here ye");
@@ -100,4 +95,10 @@ export const updateTopChart = (
     linesGroupTop,
     plotStockLines
   );
+
+  const { sourceEvent } = event;
+
+  if (sourceEvent) {
+    store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
+  }
 };

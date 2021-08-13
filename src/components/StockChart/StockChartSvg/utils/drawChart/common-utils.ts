@@ -41,7 +41,7 @@ export const plotTopChartStockLinesAndAreas = (
     .attr("fill", (d, i) => `url(#${stockKeys[i]}-top)`)
     .attr("stroke-svgWidth", 0)
     .transition()
-    .duration(800)
+    .duration(200)
     .attr("d", (d) => plotStockArea(d.values));
 
   linesGroup
@@ -52,7 +52,7 @@ export const plotTopChartStockLinesAndAreas = (
     .attr("stroke", (d, i) => supernovaColors[i])
     .attr("stroke-svgWidth", "2px")
     .transition()
-    .duration(800)
+    .duration(200)
     .attr("d", (d) => plotStockLines(d.values));
 };
 
@@ -68,7 +68,7 @@ export const plotTopChartAxes = (
     .attr("transform", `translate(0, ${topChartHeight - margin})`)
     .attr("opacity", 0.8)
     .transition()
-    .duration(800)
+    .duration(200)
     .call(xAxisTop.ticks(5))
     .attr("text-anchor", "end");
 
@@ -76,7 +76,7 @@ export const plotTopChartAxes = (
     .attr("transform", `translate(0, ${0})`)
     .attr("opacity", 0.8)
     .transition()
-    .duration(800)
+    .duration(200)
     .call(yAxisTop)
     .on("start", () => {
       yAxisGroupTop.select(".domain").remove(); // remove axis line
