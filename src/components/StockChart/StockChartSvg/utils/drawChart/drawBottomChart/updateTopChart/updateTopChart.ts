@@ -1,10 +1,17 @@
-import { BrushBehavior, ScaleTime } from "d3";
+import {
+  Axis,
+  BrushBehavior,
+  NumberValue,
+  ScaleLinear,
+  ScaleTime,
+  Selection,
+} from "d3";
 import { store } from "../../../../../../..";
 import { changeVisibleDatesDomain } from "../../../../../../../actions";
 import { ConvertedData, StockData } from "../../../../../../../types";
 import { margin, topChartHeight } from "../../../chart-utils";
-import { getBrushedMinMaxStock } from "../../../data-utils";
 import {
+  getBrushedMinMaxStock,
   getChartPlottingFunctions,
   plotTopChartStockLinesAndAreas,
 } from "../../common-utils";
@@ -19,18 +26,18 @@ export const updateTopChart = (
   event: any,
   xBottom: ScaleTime<number, number, never>,
   stockData: StockData[],
-  xAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  xTop: d3.ScaleTime<number, number, never>,
-  xAxisTop: d3.Axis<d3.NumberValue | Date>,
-  linesGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  xAxisGroupTop: Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  xTop: ScaleTime<number, number, never>,
+  xAxisTop: Axis<NumberValue | Date>,
+  linesGroupTop: Selection<SVGSVGElement, unknown, HTMLElement, any>,
   convertedData: ConvertedData[],
-  yAxisGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  yTop: d3.ScaleLinear<number, number, never>,
-  yAxisTop: d3.Axis<d3.NumberValue>,
-  brushGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  yAxisGroupTop: Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  yTop: ScaleLinear<number, number, never>,
+  yAxisTop: Axis<NumberValue>,
+  brushGroup: Selection<SVGSVGElement, unknown, HTMLElement, any>,
   brush: BrushBehavior<unknown>,
   svgWidth: number,
-  areaGroupTop: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  areaGroupTop: Selection<SVGSVGElement, unknown, HTMLElement, any>,
   offsetLeft: number
 ) => {
   // get extent of brush selection
@@ -51,12 +58,6 @@ export const updateTopChart = (
   const brushedDatesDomain = extent.map((x: number) =>
     xBottom.invert(x).getTime()
   );
-
-  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
-
-  // console.log(store.getState().visibleDatesDomain, "here ye");
-
-  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
 
   //clip the shaded under bottom chart line to brush
   clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
@@ -96,6 +97,7 @@ export const updateTopChart = (
     plotStockLines
   );
 
+  // updates datesdomain when brush event has finsihed
   const { sourceEvent } = event;
 
   if (sourceEvent) {

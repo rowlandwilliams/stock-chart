@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  convertStockDataForChart,
-  getActiveDatesDomain,
-  getActiveMinMaxStock,
-  getFullDatesDomain,
-  getFullStockDomain,
-} from "./utils/data-utils";
+
 import { StockData, TimeLabel } from "../../../types";
 import {
   margin,
-  xAxisScale,
   topChartHeight,
   svgHeight,
   stockKeys,
@@ -24,6 +17,14 @@ import { drawBottomChart } from "./utils/drawChart/drawBottomChart/drawBottomCha
 import { RootState } from "../../../reducers";
 import classNames from "classnames";
 import { useSelector } from "react-redux";
+import {
+  convertStockDataForChart,
+  getActiveDatesDomain,
+  getActiveMinMaxStock,
+  getFullDatesDomain,
+  getFullStockDomain,
+  xAxisScale,
+} from "./utils/drawChart/common-utils";
 
 interface Props {
   stockData: StockData[];

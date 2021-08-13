@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ConvertedData } from "../../../../../../types";
-import { mousemove, topChartHeight } from "../../chart-utils";
+import { topChartHeight } from "../../chart-utils";
 import {
   getChartPlottingFunctions,
   plotTopChartAxes,
@@ -9,6 +9,7 @@ import {
 import {
   addFocusLineCirclesAndText,
   getTopChartSelections,
+  mousemove,
   updateTopChartAxesDomains,
 } from "./utils";
 
