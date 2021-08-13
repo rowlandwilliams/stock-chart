@@ -6,17 +6,17 @@ import {
 } from "../utils/utils";
 
 interface Props {
-  companyName: string;
+  companyTicker: string;
   getClassFromChartHover: () => string;
 }
 
 export const BottomChartElements = ({
-  companyName,
+  companyTicker,
   getClassFromChartHover,
 }: Props) => {
   return (
     <g
-      id={`bottom-chart-group-${companyName}`}
+      id={`bottom-chart-group-${companyTicker}`}
       transform={`translate(0,${topChartHeight + margin * 2})`}
     >
       <rect
@@ -24,11 +24,14 @@ export const BottomChartElements = ({
         height={bottomChartHeight}
         fill={chartBackgroudColor}
       ></rect>
-      <g id={`x-axis-${companyName}`} className={getClassFromChartHover()}></g>
-      <g id={`y-axis-${companyName}`} className="opacity-80"></g>
-      <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
-      <g id={`lines-${companyName}`}></g>
-      <g id={`brush-${companyName}`}></g>
+      <g
+        id={`x-axis-${companyTicker}`}
+        className={getClassFromChartHover()}
+      ></g>
+      <g id={`y-axis-${companyTicker}`} className="opacity-80"></g>
+      <g id={`area-${companyTicker}`} clipPath="url(#area-crop-left)"></g>
+      <g id={`lines-${companyTicker}`}></g>
+      <g id={`brush-${companyTicker}`}></g>
     </g>
   );
 };

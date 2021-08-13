@@ -27,7 +27,7 @@ import { BottomChartElements } from "./BottomChartElements/BottomChartElements";
 interface Props {
   stockData: StockData[];
   activeTimeLabelObject: TimeLabel;
-  companyName: string;
+  companyTicker: string;
   latestDate: number;
   chartIsHovered: boolean;
 }
@@ -35,7 +35,7 @@ interface Props {
 export const StockChartSvg = ({
   stockData,
   activeTimeLabelObject,
-  companyName,
+  companyTicker,
   latestDate,
   chartIsHovered,
 }: //
@@ -95,7 +95,7 @@ Props) => {
       yAxisGroup,
       linesGroup,
       areaGroup,
-    } = getInitialChartSelections(companyName);
+    } = getInitialChartSelections(companyTicker);
 
     // define x axis scale
     const x = xAxisScale(visibleDatesDomain, width);
@@ -110,7 +110,7 @@ Props) => {
       xAxisGroup,
       yAxisGroup,
       linesGroup,
-      companyName,
+      companyTicker,
       x,
       y,
       visibleDatesDomain,
@@ -125,7 +125,7 @@ Props) => {
     );
 
     drawBottomChart(
-      companyName,
+      companyTicker,
       stockData,
       width,
       bottomChartGroup,
@@ -155,15 +155,15 @@ Props) => {
 
   return (
     <div className="w-full" ref={parentRef}>
-      <svg width="100%" height={svgHeight} id={`chart-svg-${companyName}`}>
+      <svg width="100%" height={svgHeight} id={`chart-svg-${companyTicker}`}>
         <BottomChartClipPath />
         <Defs stockKeys={stockKeys} />
         <TopChartElements
-          companyName={companyName}
+          companyTicker={companyTicker}
           getClassFromChartHover={getClassFromChartHover}
         />
         <BottomChartElements
-          companyName={companyName}
+          companyTicker={companyTicker}
           getClassFromChartHover={getClassFromChartHover}
         />
       </svg>

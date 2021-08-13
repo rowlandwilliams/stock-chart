@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { companyStockData } from "./data/companyStockData";
-import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
-import { TimeLabels } from "./TimeLabels/TimeLabels";
 import { timeLabels } from "./data/timeLabels";
-import { capitalizeString } from "./StockChartSvg/utils/utils";
+import { HeaderLegend } from "./HeaderLegend/HeaderLegend";
+import { HeaderText } from "./HeaderText/HeaderText";
+import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
+import { stockKeys } from "./StockChartSvg/utils/utils";
+import { TimeLabels } from "./TimeLabels/TimeLabels";
 
 interface Props {
-  companyName: string;
+  companyTicker: string;
 }
 
-export const StockChart = ({ companyName }: Props) => {
+export const StockChart = ({ companyTicker }: Props) => {
   const [chartIsHovered, setChartIsHovered] = useState(false);
+
   // define company data based on provided company name
-  const stockData = companyStockData[companyName].map((stockObj) => ({
+  const stockData = companyStockData[companyTicker].data.map((stockObj) => ({
     ...stockObj,
     date: Date.parse(stockObj.date),
   }));
@@ -20,8 +23,7 @@ export const StockChart = ({ companyName }: Props) => {
   // set initially active time period (1Y)
   const activeTimeLabelObject = timeLabels[timeLabels.length - 1];
 
-  const latestDate = stockData.slice(-1)[0].date;
-
+  const { date, high } = stockData.slice(-1)[0];
   return (
     <div
       className="block mx-auto max-w-4xl p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
@@ -30,14 +32,26 @@ export const StockChart = ({ companyName }: Props) => {
       onMouseLeave={() => setChartIsHovered(false)}
     >
       <div className="flex justify-between">
-        <div>{capitalizeString(companyName)}</div>
-        <TimeLabels latestDate={latestDate} />
+        <div className="flex flex-col sm:flex-row">
+          <HeaderText
+            boldText={companyStockData[companyTicker].name}
+            subText={companyStockData[companyTicker].name}
+          />
+          <HeaderText
+            boldText={high.toFixed(2)}
+            subText="USD"
+            boldTextMarginRight={2}
+          />
+          <HeaderLegend stockKeys={stockKeys} />
+        </div>
+
+        <TimeLabels latestDate={date} />
       </div>
       <StockChartSvg
         stockData={stockData}
         activeTimeLabelObject={activeTimeLabelObject}
-        companyName={companyName}
-        latestDate={latestDate}
+        companyTicker={companyTicker}
+        latestDate={date}
         chartIsHovered={chartIsHovered}
       />
     </div>

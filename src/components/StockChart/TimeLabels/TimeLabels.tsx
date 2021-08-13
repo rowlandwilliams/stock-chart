@@ -13,7 +13,7 @@ export const TimeLabels = ({ latestDate }: Props) => {
   const { visibleDatesDomain } = useSelector((state: RootState) => state);
 
   return (
-    <div className="flex">
+    <div className="flex items-baseline">
       {timeLabels.map((labelObject) => (
         <div
           className={classNames(

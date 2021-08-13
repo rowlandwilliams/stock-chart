@@ -1,12 +1,6 @@
-import { bisect, pointer, ScaleLinear, ScaleTime, select, Selection } from "d3";
+import { bisect, bisectCenter, pointer, ScaleLinear, ScaleTime, select, Selection } from "d3";
 import { ConvertedData } from "../../../../../../types";
-import {
-  brushColor,
-  capitalizeString,
-  margin,
-  supernovaColors,
-  topChartHeight,
-} from "../../utils";
+import { brushColor, capitalizeString, margin, supernovaColors, topChartHeight } from "../../utils";
 
 export const getTopChartSelections = (
   companyName: string,
@@ -26,8 +20,8 @@ export const getTopChartSelections = (
 };
 
 export const updateTopChartAxesDomains = (
-  x: ScaleTime<number, number, never>,
-  y: ScaleLinear<number, number, never>,
+  x: d3.ScaleTime<number, number, never>,
+  y: d3.ScaleLinear<number, number, never>,
   activeDatesDomain: number[],
   activeStocksDomain: number[],
   svgWidth: number
@@ -39,10 +33,10 @@ export const updateTopChartAxesDomains = (
 const chartBackgroundColor = "#1a1b3e";
 
 export const addFocusLineCirclesAndText = (
-  focusLine: Selection<SVGSVGElement, unknown, HTMLElement, any>,
-  focusCircles: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
+  focusLine: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  focusCircles: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   convertedData: ConvertedData[],
-  focusText: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>
+  focusText: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>
 ) => {
   focusLine
     .attr("stroke", "white")

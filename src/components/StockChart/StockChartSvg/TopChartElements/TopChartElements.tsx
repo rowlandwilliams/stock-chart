@@ -1,25 +1,31 @@
 import { margin, topChartHeight } from "../utils/utils";
 
 interface Props {
-  companyName: string;
+  companyTicker: string;
   getClassFromChartHover: () => string;
 }
 
 export const TopChartElements = ({
-  companyName,
+  companyTicker,
   getClassFromChartHover,
 }: Props) => {
   return (
     <g
-      id={`top-chart-group-${companyName}`}
+      id={`top-chart-group-${companyTicker}`}
       height={topChartHeight}
       transform={`translate(0,${margin})`}
     >
-      <g id={`x-axis-${companyName}`} className={getClassFromChartHover()}></g>
-      <g id={`y-axis-${companyName}`} className={getClassFromChartHover()}></g>
-      <g id={`area-${companyName}`}></g>
-      <g id={`lines-${companyName}`}></g>
-      <g id={`focus-${companyName}`}>
+      <g
+        id={`x-axis-${companyTicker}`}
+        className={getClassFromChartHover()}
+      ></g>
+      <g
+        id={`y-axis-${companyTicker}`}
+        className={getClassFromChartHover()}
+      ></g>
+      <g id={`area-${companyTicker}`}></g>
+      <g id={`lines-${companyTicker}`}></g>
+      <g id={`focus-${companyTicker}`}>
         <line></line>
         <rect></rect>
       </g>
