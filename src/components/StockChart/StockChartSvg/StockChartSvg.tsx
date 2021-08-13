@@ -1,18 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-
 import { StockData, TimeLabel } from "../../../types";
 import {
   margin,
-  topChartHeight,
   svgHeight,
   stockKeys,
-  supernovaColors,
-  bottomChartHeight,
-  chartBackgroudColor,
   getInitialChartSelections,
 } from "./utils/utils";
-import { LinearGradient } from "./LinearGradient/LinearGradient";
-import { axisBottom, axisLeft, line, scaleLinear, select } from "d3";
+import { axisBottom, axisLeft, scaleLinear } from "d3";
 import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
 import { drawBottomChart } from "./utils/drawChart/drawBottomChart/drawBottomChart";
 import { RootState } from "../../../reducers";
@@ -20,12 +14,15 @@ import classNames from "classnames";
 import { useSelector } from "react-redux";
 import {
   convertStockDataForChart,
-  getActiveDatesDomain,
   getActiveMinMaxStock,
   getFullDatesDomain,
   getFullStockDomain,
   xAxisScale,
 } from "./utils/drawChart/common-utils";
+import { BottomChartClipPath } from "./BottomChartClipPath/BottomChartClipPath";
+import { Defs } from "./Defs/Defs";
+import { TopChartElements } from "./TopChartElements/TopChartElements";
+import { BottomChartElements } from "./BottomChartElements/BottomChartElements";
 
 interface Props {
   stockData: StockData[];
@@ -100,19 +97,8 @@ Props) => {
       areaGroup,
     } = getInitialChartSelections(companyName);
 
-    // determine latest date
-
-    // calculate dates domain based on activeTimeLabelObject (the time button which is clicked e.g 1W, 1M ...)
-    const activeDatesDomain = getActiveDatesDomain(
-      stockData,
-      latestDate,
-      activeTimeLabelObject
-    );
-
-    // setVisibleDatesDomain(activeDatesDomain);
-
     // define x axis scale
-    const x = xAxisScale(activeDatesDomain, width);
+    const x = xAxisScale(visibleDatesDomain, width);
     const y = scaleLinear();
 
     // define x axis
@@ -169,73 +155,17 @@ Props) => {
 
   return (
     <div className="w-full" ref={parentRef}>
-      <svg
-        width="100%"
-        height={svgHeight}
-        id={`chart-svg-${companyName}`}
-        pointerEvents="all"
-      >
-        <clipPath id="area-crop-left" pointerEvents="all">
-          <rect height={svgHeight - margin * 2} rx="4" ry="4" fill="red"></rect>
-        </clipPath>
-        <defs>
-          {stockKeys.map((stockKey, i) => (
-            <LinearGradient
-              key={stockKey + "-top"}
-              gradientId={stockKey + "-top"}
-              gradientColor={supernovaColors[i]}
-              isTopChart
-              chartHeight={topChartHeight}
-            />
-          ))}
-          {stockKeys.map((stockKey, i) => (
-            <LinearGradient
-              key={stockKey + "-bottom"}
-              gradientId={stockKey + "-bottom"}
-              gradientColor={supernovaColors[i]}
-              chartHeight={bottomChartHeight}
-            />
-          ))}
-        </defs>
-        <g
-          id={`top-chart-group-${companyName}`}
-          height={topChartHeight}
-          transform={`translate(0,${margin})`}
-        >
-          <g
-            id={`x-axis-${companyName}`}
-            // className="opacity-0"
-            className={getClassFromChartHover()}
-          ></g>
-          <g
-            id={`y-axis-${companyName}`}
-            className={getClassFromChartHover()}
-          ></g>
-          <g id={`area-${companyName}`}></g>
-          <g id={`lines-${companyName}`}></g>
-          <g id={`focus-${companyName}`}>
-            <line></line>
-            <rect></rect>
-          </g>
-        </g>
-        <g
-          id={`bottom-chart-group-${companyName}`}
-          transform={`translate(0,${topChartHeight + margin * 2})`}
-        >
-          <rect
-            width="100%"
-            height={bottomChartHeight}
-            fill={chartBackgroudColor}
-          ></rect>
-          <g
-            id={`x-axis-${companyName}`}
-            className={getClassFromChartHover()}
-          ></g>
-          <g id={`y-axis-${companyName}`} className="opacity-80"></g>
-          <g id={`area-${companyName}`} clipPath="url(#area-crop-left)"></g>
-          <g id={`lines-${companyName}`}></g>
-          <g id={`brush-${companyName}`}></g>
-        </g>
+      <svg width="100%" height={svgHeight} id={`chart-svg-${companyName}`}>
+        <BottomChartClipPath />
+        <Defs stockKeys={stockKeys} />
+        <TopChartElements
+          companyName={companyName}
+          getClassFromChartHover={getClassFromChartHover}
+        />
+        <BottomChartElements
+          companyName={companyName}
+          getClassFromChartHover={getClassFromChartHover}
+        />
       </svg>
     </div>
   );

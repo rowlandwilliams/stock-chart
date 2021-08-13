@@ -1,4 +1,4 @@
-import { bottomChartHeight, margin } from "../utils/utils";
+import { bottomChartHeight, margin } from "../../utils/utils";
 
 interface Props {
   gradientId: string;
