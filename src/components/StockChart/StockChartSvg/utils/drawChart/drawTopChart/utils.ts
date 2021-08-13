@@ -6,7 +6,7 @@ import {
   margin,
   supernovaColors,
   topChartHeight,
-} from "../../chart-utils";
+} from "../../utils";
 
 export const getTopChartSelections = (
   companyName: string,

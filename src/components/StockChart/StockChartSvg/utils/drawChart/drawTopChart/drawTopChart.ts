@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { ConvertedData } from "../../../../../../types";
-import { topChartHeight } from "../../chart-utils";
+import { topChartHeight } from "../../utils";
 import {
   getChartPlottingFunctions,
   plotTopChartAxes,

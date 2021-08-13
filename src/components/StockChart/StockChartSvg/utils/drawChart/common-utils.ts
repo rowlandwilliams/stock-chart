@@ -10,7 +10,7 @@ import {
   stockKeys,
   supernovaColors,
   topChartHeight,
-} from "../chart-utils";
+} from "../utils";
 
 export const convertStockDataForChart = (stockData: StockData[]) => {
   // wide format to long format

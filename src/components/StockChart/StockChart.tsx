@@ -3,7 +3,7 @@ import { companyStockData } from "./data/companyStockData";
 import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
 import { TimeLabels } from "./TimeLabels/TimeLabels";
 import { timeLabels } from "./data/timeLabels";
-import { capitalizeString } from "./StockChartSvg/utils/chart-utils";
+import { capitalizeString } from "./StockChartSvg/utils/utils";
 
 interface Props {
   companyName: string;

@@ -9,7 +9,8 @@ import {
   supernovaColors,
   bottomChartHeight,
   chartBackgroudColor,
-} from "./utils/chart-utils";
+  getInitialChartSelections,
+} from "./utils/utils";
 import { LinearGradient } from "./LinearGradient/LinearGradient";
 import { axisBottom, axisLeft, line, scaleLinear, select } from "d3";
 import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
@@ -90,24 +91,14 @@ Props) => {
 
   // each time time period button is clicked transition lines
   useEffect(() => {
-    const topChartGroup = select<SVGSVGElement, unknown>(
-      `#top-chart-group-${companyName}`
-    );
-    const bottomChartGroup = select<SVGSVGElement, unknown>(
-      `#bottom-chart-group-${companyName}`
-    );
-    const xAxisGroup = topChartGroup.select<SVGSVGElement>(
-      `#x-axis-${companyName}`
-    );
-    const yAxisGroup = topChartGroup.select<SVGSVGElement>(
-      `#y-axis-${companyName}`
-    );
-    const linesGroup = topChartGroup.select<SVGSVGElement>(
-      `#lines-${companyName}`
-    );
-    const areaGroup = topChartGroup.select<SVGSVGElement>(
-      `#area-${companyName}`
-    );
+    const {
+      topChartGroup,
+      bottomChartGroup,
+      xAxisGroup,
+      yAxisGroup,
+      linesGroup,
+      areaGroup,
+    } = getInitialChartSelections(companyName);
 
     // determine latest date
 

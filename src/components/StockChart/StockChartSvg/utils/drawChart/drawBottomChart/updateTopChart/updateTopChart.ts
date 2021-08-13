@@ -9,7 +9,7 @@ import {
 import { store } from "../../../../../../..";
 import { changeVisibleDatesDomain } from "../../../../../../../actions";
 import { ConvertedData, StockData } from "../../../../../../../types";
-import { margin, topChartHeight } from "../../../chart-utils";
+import { margin, topChartHeight } from "../../../utils";
 import {
   getBrushedMinMaxStock,
   getChartPlottingFunctions,

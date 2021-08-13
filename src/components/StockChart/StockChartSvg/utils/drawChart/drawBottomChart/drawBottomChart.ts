@@ -1,6 +1,6 @@
 import { brushX, scaleTime } from "d3";
 import { ConvertedData, StockData } from "../../../../../../types";
-import { bottomChartHeight, margin } from "../../chart-utils";
+import { bottomChartHeight, margin } from "../../utils";
 import {
   getChartPlottingFunctions,
   plotTopChartStockLinesAndAreas,

@@ -1,5 +1,5 @@
 import { axisBottom, scaleLinear, ScaleTime, scaleTime, Selection } from "d3";
-import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
+import { bottomChartHeight, brushColor, margin } from "../../utils";
 import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
 
 export const getBottomChartSelections = (
