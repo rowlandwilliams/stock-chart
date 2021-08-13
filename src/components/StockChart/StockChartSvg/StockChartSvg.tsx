@@ -21,6 +21,9 @@ import { LinearGradient } from "./LinearGradient/LinearGradient";
 import { axisBottom, axisLeft, line, scaleLinear, select, selectAll } from "d3";
 import { drawTopChart } from "./utils/drawChart/drawTopChart/drawTopChart";
 import { drawBottomChart } from "./utils/drawChart/drawBottomChart/drawBottomChart";
+import { useDispatch, useSelector } from "react-redux";
+import { increaseDomain } from "../../../actions";
+import { RootState } from "../../../reducers";
 
 interface Props {
   stockData: StockData[];
@@ -46,6 +49,8 @@ export const StockChartSvg = ({
   const fullDatesDomain = getFullDatesDomain(stockData);
   const fullStocksDomain = getFullStockDomain(stockData);
 
+  const state = useSelector((state: RootState) => state.visibleDatesDomain);
+  const dispatch = useDispatch();
   // determine latest date
 
   //on page load set svg height
@@ -215,6 +220,15 @@ export const StockChartSvg = ({
           <g id={`brush-${companyName}`}></g>
         </g>
       </svg>
+
+      <button
+        onClick={() => {
+          dispatch(increaseDomain());
+          console.log(state);
+        }}
+      >
+        Increse
+      </button>
     </div>
   );
 };
