@@ -1,9 +1,4 @@
-import {
-  bottomChartHeight,
-  margin,
-  svgHeight,
-  topChartHeight,
-} from "../utils/chart-utils";
+import { bottomChartHeight, margin } from "../utils/chart-utils";
 
 interface Props {
   gradientId: string;
@@ -28,8 +23,8 @@ export const LinearGradient = ({
         x2="0%"
         y2={isTopChart ? chartHeight + margin : bottomChartHeight - margin}
       >
-        <stop stop-color={gradientColor} offset="0" />
-        <stop stop-color="#1A1B3E" offset="1" />
+        <stop stopColor={gradientColor} offset="0" />
+        <stop stopColor="#1A1B3E" offset="1" />
       </linearGradient>
     </>
   );

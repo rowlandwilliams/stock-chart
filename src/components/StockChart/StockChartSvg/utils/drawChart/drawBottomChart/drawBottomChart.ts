@@ -1,23 +1,11 @@
-import { brushX, scaleTime, select, selectAll } from "d3";
-import { store } from "../../../../../..";
-import { changeVisibleDatesDomain } from "../../../../../../actions";
+import { brushX, scaleTime } from "d3";
 import { ConvertedData, StockData } from "../../../../../../types";
-import {
-  bottomChartHeight,
-  brushColor,
-  margin,
-  topChartHeight,
-} from "../../chart-utils";
-import { getBrushedMinMaxStock } from "../../data-utils";
+import { bottomChartHeight, margin } from "../../chart-utils";
 import {
   getChartPlottingFunctions,
   plotTopChartStockLinesAndAreas,
 } from "../common-utils";
 import { updateTopChart } from "./updateTopChart/updateTopChart";
-import {
-  clipBottomChartAreaToBrush,
-  getNewViewExtentOnBrushClick,
-} from "./updateTopChart/utils";
 import {
   getBottomChartScalesAndAxes,
   getBottomChartSelections,

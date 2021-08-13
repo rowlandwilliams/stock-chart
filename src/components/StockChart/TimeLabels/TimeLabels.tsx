@@ -2,22 +2,16 @@ import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
 import { changeVisibleDatesDomain } from "../../../actions";
 import { RootState } from "../../../reducers";
-import { TimeLabel } from "../../../types";
 import { timeLabels } from "../data/timeLabels";
 
 interface Props {
-  activeTimeLabelObject: TimeLabel;
-  onTimeLabelClick: (labelObject: TimeLabel) => void;
   latestDate: number;
 }
 
-export const TimeLabels = ({
-  activeTimeLabelObject,
-  onTimeLabelClick,
-  latestDate,
-}: Props) => {
+export const TimeLabels = ({ latestDate }: Props) => {
   const dispatch = useDispatch();
-  
+  const { visibleDatesDomain } = useSelector((state: RootState) => state);
+
   return (
     <div className="flex">
       {timeLabels.map((labelObject) => (
@@ -26,13 +20,12 @@ export const TimeLabels = ({
             "w-10 ml-2 text-center rounded-lg bg-opacity-20 cursor-pointer",
             {
               "bg-bar_colour text-white":
-                activeTimeLabelObject.label === labelObject.label,
+                labelObject.domain[0] === visibleDatesDomain[0],
               "text-bar_colour text-opacity-20  hover:bg-bar_colour hover:bg-opacity-20 hover:text-chart_background":
-                activeTimeLabelObject.label !== labelObject.label,
+                labelObject.domain[0] !== visibleDatesDomain[0],
             }
           )}
           onClick={() => {
-            onTimeLabelClick(labelObject);
             dispatch(
               changeVisibleDatesDomain([
                 latestDate - labelObject.timescale,
@@ -40,6 +33,7 @@ export const TimeLabels = ({
               ])
             );
           }}
+          key={labelObject.label}
         >
           {labelObject.label}
         </div>

@@ -1,8 +1,4 @@
 import { axisBottom, scaleLinear, ScaleTime, scaleTime, Selection } from "d3";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { store } from "../../../../../..";
-import { changeVisibleDatesDomain } from "../../../../../../actions";
 import { bottomChartHeight, brushColor, margin } from "../../chart-utils";
 import { clipBottomChartAreaToBrush } from "./updateTopChart/utils";
 
@@ -74,5 +70,4 @@ export const updateBottomAreaWhileBrushing = (
   );
 
   clipBottomChartAreaToBrush(xBottom, brushedDatesDomain);
-  // store.dispatch(changeVisibleDatesDomain(brushedDatesDomain));
 };

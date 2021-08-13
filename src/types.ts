@@ -33,4 +33,5 @@ export type StockKey = string;
 export interface TimeLabel {
   label: string;
   timescale: number;
+  domain: number[];
 }

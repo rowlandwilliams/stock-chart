@@ -1,4 +1,4 @@
-import { area, line, selectAll, timeWeek } from "d3";
+import { area, line } from "d3";
 import { ConvertedData, StockValue } from "../../../../../types";
 import {
   margin,
@@ -66,6 +66,7 @@ export const plotTopChartAxes = (
 
   xAxisGroupTop
     .attr("transform", `translate(0, ${topChartHeight - margin})`)
+    .attr("opacity", 0.8)
     .transition()
     .duration(800)
     .call(xAxisTop.ticks(5))
@@ -73,6 +74,7 @@ export const plotTopChartAxes = (
 
   yAxisGroupTop
     .attr("transform", `translate(0, ${0})`)
+    .attr("opacity", 0.8)
     .transition()
     .duration(800)
     .call(yAxisTop)

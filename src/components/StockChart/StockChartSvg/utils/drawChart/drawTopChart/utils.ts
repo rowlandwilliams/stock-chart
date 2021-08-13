@@ -1,5 +1,5 @@
-import { area, line, select } from "d3";
-import { ConvertedData, StockValue } from "../../../../../../types";
+import { select } from "d3";
+import { ConvertedData } from "../../../../../../types";
 import { margin, supernovaColors, topChartHeight } from "../../chart-utils";
 
 export const getTopChartSelections = (
