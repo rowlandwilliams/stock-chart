@@ -26,6 +26,8 @@ export const StockChart = ({ companyName }: Props) => {
     return setActiveTimeLabelObject(labelObject);
   };
 
+  const latestDate = stockData.slice(-1)[0].date;
+
   return (
     <div
       className="block mx-auto max-w-4xl p-4 mb-2 text-white font-semibold bg-chart_background rounded-lg"
@@ -36,12 +38,14 @@ export const StockChart = ({ companyName }: Props) => {
         <TimeLabels
           activeTimeLabelObject={activeTimeLabelObject}
           onTimeLabelClick={handleTimeLabelClick}
+          latestDate={latestDate}
         />
       </div>
       <StockChartSvg
         stockData={stockData}
         activeTimeLabelObject={activeTimeLabelObject}
         companyName={companyName}
+        latestDate={latestDate}
       />
     </div>
   );

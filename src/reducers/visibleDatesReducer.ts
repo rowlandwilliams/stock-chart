@@ -1,9 +1,11 @@
 import { AnyAction } from "redux";
 
-export const visibleDatesReducer = (state = [100, 100], action: AnyAction) => {
+const intialState = [1595808000000, 1627344000000];
+
+export const visibleDatesReducer = (state = intialState, action: AnyAction) => {
   switch (action.type) {
     case "CHANGEDOMAIN":
-      return state.map((x) => x + 1);
+      return action.visibleDatesDomain;
 
     default:
       return state;

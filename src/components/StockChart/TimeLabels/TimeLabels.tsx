@@ -1,16 +1,25 @@
 import classNames from "classnames";
+import { useDispatch, useSelector } from "react-redux";
+import { changeVisibleDatesDomain } from "../../../actions";
+import { RootState } from "../../../reducers";
 import { TimeLabel } from "../../../types";
 import { timeLabels } from "../data/timeLabels";
 
 interface Props {
   activeTimeLabelObject: TimeLabel;
   onTimeLabelClick: (labelObject: TimeLabel) => void;
+  latestDate: number;
 }
 
 export const TimeLabels = ({
   activeTimeLabelObject,
   onTimeLabelClick,
+  latestDate,
 }: Props) => {
+  const dispatch = useDispatch();
+  const visibleDatesDomain = useSelector(
+    (state: RootState) => state.visibleDatesDomain
+  );
   return (
     <div className="flex">
       {timeLabels.map((labelObject) => (
@@ -24,7 +33,15 @@ export const TimeLabels = ({
                 activeTimeLabelObject.label !== labelObject.label,
             }
           )}
-          onClick={() => onTimeLabelClick(labelObject)}
+          onClick={() => {
+            onTimeLabelClick(labelObject);
+            dispatch(
+              changeVisibleDatesDomain([
+                latestDate - labelObject.timescale,
+                latestDate,
+              ])
+            );
+          }}
         >
           {labelObject.label}
         </div>
