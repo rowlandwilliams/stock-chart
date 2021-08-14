@@ -1,5 +1,5 @@
-import { GraphIconG } from "../GraphIconG/GraphIconG";
-import { getTriangleCoordinatesFromTooltipDifference } from "./utils/utils";
+import { GraphIconG } from "./GraphIconG/GraphIconG";
+import { TriangleArrow } from "./TriangleArrow/TriangleArrow";
 
 interface Props {
   svgColor: string;
@@ -27,13 +27,8 @@ export const GraphSvg = ({
         width="0.75rem"
       >
         {topChartIsHovered ? (
-          <polygon
-            points={getTriangleCoordinatesFromTooltipDifference(
-              tooltipDifferenceIsPositive
-            )}
-            fill={tooltipDifferenceIsPositive ? "#54f054" : "#f0453c"}
-            stroke={tooltipDifferenceIsPositive ? "#54f054" : "#f0453c"}
-            stroke-width="10"
+          <TriangleArrow
+            tooltipDifferenceIsPositive={tooltipDifferenceIsPositive}
           />
         ) : (
           <GraphIconG svgColor={svgColor} />

@@ -24,9 +24,9 @@ export const HeaderLegendItem = ({ stockKey, textColor }: Props) => {
         tooltipDifferenceIsPositive={tooltipDifference > 0}
       />
 
-      <div className='w-10'>
+      <div className="w-10">
         {topChartIsHovered
-          ? (tooltipDifference > 0 ? "+" : '') + tooltipDifference
+          ? (tooltipDifference > 0 ? "+" : "") + tooltipDifference
           : capitalizeString(stockKey)}
       </div>
     </div>
