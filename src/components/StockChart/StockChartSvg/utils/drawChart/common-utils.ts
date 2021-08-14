@@ -5,12 +5,7 @@ import {
   StockValue,
   TimeLabel,
 } from "../../../../../types";
-import {
-  margin,
-  stockKeys,
-  supernovaColors,
-  topChartHeight,
-} from "../utils";
+import { margin, stockKeys, supernovaColors, topChartHeight } from "../utils";
 
 export const convertStockDataForChart = (stockData: StockData[]) => {
   // wide format to long format

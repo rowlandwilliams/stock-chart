@@ -30,6 +30,7 @@ interface Props {
   companyTicker: string;
   latestDate: number;
   chartIsHovered: boolean;
+  latestStock: number;
 }
 
 export const StockChartSvg = ({
@@ -38,6 +39,7 @@ export const StockChartSvg = ({
   companyTicker,
   latestDate,
   chartIsHovered,
+  latestStock,
 }: //
 Props) => {
   // define ref for parent container
@@ -121,7 +123,8 @@ Props) => {
       convertedData,
       margin,
       stockData.map((x) => x.date),
-      topChartGroup
+      topChartGroup,
+      latestStock
     );
 
     drawBottomChart(

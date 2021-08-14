@@ -53,6 +53,7 @@ export const StockChart = ({ companyTicker }: Props) => {
         companyTicker={companyTicker}
         latestDate={date}
         chartIsHovered={chartIsHovered}
+        latestStock={high}
       />
     </div>
   );

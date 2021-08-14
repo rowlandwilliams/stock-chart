@@ -1,11 +1,4 @@
-interface StockDataObj {
-  date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-}
+import { StockDataObj } from "../../../types";
 
 interface CompanyData {
   [key: string]: {

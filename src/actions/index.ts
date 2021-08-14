@@ -1,3 +1,4 @@
+import { TooltipDifferenceObject } from "../types";
 
 export const changeVisibleDatesDomain = (visibleDatesDomain: number[]) => ({
   type: "CHANGEDOMAIN",
@@ -7,4 +8,11 @@ export const changeVisibleDatesDomain = (visibleDatesDomain: number[]) => ({
 export const setTopChartIsHovered = (isTopChartHovered: boolean) => ({
   type: "CHANGECHARTHOVER",
   topChartIsHovered: isTopChartHovered,
+});
+
+export const setTooltipDifference = (
+  sequentialLineDateObj: TooltipDifferenceObject
+) => ({
+  type: "CHANGETOOLTIPDIFFERENCE",
+  tooltipDifferences: sequentialLineDateObj,
 });

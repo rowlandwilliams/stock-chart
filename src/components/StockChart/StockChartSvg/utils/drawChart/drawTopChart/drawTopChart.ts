@@ -28,7 +28,8 @@ export const drawTopChart = (
   convertedData: ConvertedData[],
   margin: number,
   dates: number[],
-  topChartGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
+  topChartGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  latestStock: number
 ) => {
   // select lines g
   const {
@@ -88,7 +89,8 @@ export const drawTopChart = (
         focusCircles,
         focusText,
         focusTextRects,
-        svgWidth
+        svgWidth,
+        latestStock
       )
     );
 };

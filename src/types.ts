@@ -23,7 +23,7 @@ export interface StockValue {
 }
 
 export interface ConvertedData {
-  [key: string]: string | StockValue[];
+  [key: string]: string | StockValue[] | number;
   stockMetric: string;
   values: StockValue[];
 }
@@ -34,4 +34,22 @@ export interface TimeLabel {
   label: string;
   timescale: number;
   domain: number[];
+}
+
+export interface StockDataObj {
+  [key: string]: number | string;
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export interface TooltipDifferenceObject {
+  [key: string]: number;
+  high: number;
+  open: number;
+  close: number;
+  low: number;
 }

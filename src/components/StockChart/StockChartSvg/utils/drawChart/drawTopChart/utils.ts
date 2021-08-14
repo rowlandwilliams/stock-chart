@@ -1,6 +1,17 @@
-import { bisect, bisectCenter, pointer, ScaleLinear, ScaleTime, select, Selection } from "d3";
-import { ConvertedData } from "../../../../../../types";
-import { brushColor, capitalizeString, margin, supernovaColors, topChartHeight } from "../../utils";
+import { bisect, pointer, ScaleLinear, ScaleTime, select, Selection } from "d3";
+import { store } from "../../../../../..";
+import { setTooltipDifference } from "../../../../../../actions";
+import {
+  ConvertedData,
+  TooltipDifferenceObject,
+} from "../../../../../../types";
+import {
+  brushColor,
+  capitalizeString,
+  margin,
+  supernovaColors,
+  topChartHeight,
+} from "../../utils";
 
 export const getTopChartSelections = (
   companyName: string,
@@ -70,7 +81,8 @@ export const mousemove = (
   focusCircles: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   focusText: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   focusTextRects: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
-  width: number
+  width: number,
+  latestStock: number
 ) => {
   // height of one label
   const textHeight = 20;
@@ -108,10 +120,17 @@ export const mousemove = (
     // for the given date get the value for each stockMetric
     const sequentialLineData: number[] = [];
 
-    // for each label grab data value associated with it and push to array
+    const sequentialLineDateObj = {} as TooltipDifferenceObject;
+
+    // for each label grab data value associated with it and push to array and object
     focusText.each((d: any) => {
       sequentialLineData.push(d.values[idxFinal].value);
+      sequentialLineDateObj[d.stockMetric] =
+        d.values[idxFinal].value - latestStock;
     });
+
+    // set tooltip diff state
+    store.dispatch(setTooltipDifference(sequentialLineDateObj));
 
     // sort in descneding order (for y positioning)
     sequentialLineData.sort().reverse();
