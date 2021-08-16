@@ -34,6 +34,12 @@ export const TopChartElements = ({
         <line></line>
         <rect></rect>
       </g>
+      <rect
+        id={`overlay-${companyTicker}`}
+        width="100%"
+        height="100%"
+        fill="none"
+      ></rect>
     </g>
   );
 };

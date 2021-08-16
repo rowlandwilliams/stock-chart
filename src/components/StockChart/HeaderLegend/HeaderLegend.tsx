@@ -7,7 +7,7 @@ interface Props {
 
 export const HeaderLegend = ({ stockKeys }: Props) => {
   return (
-    <div className="flex text-xs">
+    <div className="flex text-xs sm:text-xs">
       {stockKeys.map((stockKey, i) => (
         <HeaderLegendItem stockKey={stockKey} textColor={supernovaColors[i]} />
       ))}

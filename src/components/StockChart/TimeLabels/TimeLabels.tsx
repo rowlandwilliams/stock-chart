@@ -17,7 +17,7 @@ export const TimeLabels = ({ latestDate }: Props) => {
       {timeLabels.map((labelObject) => (
         <div
           className={classNames(
-            "w-10 ml-2 text-center rounded-lg bg-opacity-20 cursor-pointer",
+            "w-8 sm:w-10 ml-2 text-center rounded-lg bg-opacity-20 cursor-pointer",
             {
               "bg-bar_colour text-white":
                 labelObject.domain[0] === visibleDatesDomain[0],
