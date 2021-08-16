@@ -153,7 +153,6 @@ export const plotTopChartStockLinesAndAreas = (
     .join("path")
     .attr("fill", "none")
     .attr("stroke", (d, i) => supernovaColors[i])
-    .attr("stroke-svgWidth", "2px")
     .transition()
     .duration(200)
     .attr("d", (d) => plotStockLines(d.values));

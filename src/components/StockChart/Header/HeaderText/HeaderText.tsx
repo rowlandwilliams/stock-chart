@@ -4,14 +4,10 @@ interface Props {
   boldTextMarginRight?: number;
 }
 
-export const HeaderText = ({
-  boldText,
-  subText,
-  boldTextMarginRight = 4,
-}: Props) => {
+export const HeaderText = ({ boldText, subText }: Props) => {
   return (
     <div className="flex items-end sm:mr-8">
-      <div className={`mr-${String(boldTextMarginRight)}`}>{boldText}</div>
+      <div className="mr-2">{boldText}</div>
       <div className="opacity-20 text-sm">{subText}</div>
     </div>
   );

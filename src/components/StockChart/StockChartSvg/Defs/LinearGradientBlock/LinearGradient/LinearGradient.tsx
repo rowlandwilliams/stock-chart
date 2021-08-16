@@ -21,7 +21,7 @@ export const LinearGradient = ({
         x1="0%"
         y1={isTopChart ? 0 : 10}
         x2="0%"
-        y2={isTopChart ? chartHeight + margin : bottomChartHeight - margin}
+        y2={isTopChart ? chartHeight : bottomChartHeight - margin}
       >
         <stop stopColor={gradientColor} offset="0" />
         <stop stopColor="#1A1B3E" offset="1" />
