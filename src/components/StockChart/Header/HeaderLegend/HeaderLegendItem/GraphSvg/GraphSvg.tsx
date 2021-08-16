@@ -23,7 +23,7 @@ export const GraphSvg = ({
         y="0px"
         viewBox="0 0 511.9 511.9"
         xmlSpace="preserve"
-        height="0.75rem"
+        height={topChartIsHovered ? "0.75rem" : "0.65rem"}
         width="0.75rem"
       >
         {topChartIsHovered ? (

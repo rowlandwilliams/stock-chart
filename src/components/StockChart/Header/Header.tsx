@@ -13,7 +13,7 @@ interface Props {
 export const Header = ({ companyTicker, latestStock, latestDate }: Props) => {
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-end">
         <div className="flex flex-col sm:flex-row">
           <HeaderText
             boldText={companyTicker.toUpperCase()}
