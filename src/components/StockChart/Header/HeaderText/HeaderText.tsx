@@ -11,7 +11,7 @@ export const HeaderText = ({
 }: Props) => {
   return (
     <div className="flex items-end sm:mr-8">
-      <div className={`mr-${boldTextMarginRight}`}>{boldText}</div>
+      <div className={`mr-${String(boldTextMarginRight)}`}>{boldText}</div>
       <div className="opacity-20 text-sm">{subText}</div>
     </div>
   );
