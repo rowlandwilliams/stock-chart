@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { companyStockData } from "./data/companyStockData";
 import { timeLabels } from "./data/timeLabels";
-import { HeaderLegend } from "./HeaderLegend/HeaderLegend";
-import { HeaderText } from "./HeaderText/HeaderText";
 import { StockChartSvg } from "./StockChartSvg/StockChartSvg";
-import { stockKeys } from "./StockChartSvg/utils/utils";
-import { TimeLabels } from "./TimeLabels/TimeLabels";
+import { Header } from "./Header/Header";
 
 interface Props {
   companyTicker: string;
@@ -31,33 +28,11 @@ export const StockChart = ({ companyTicker }: Props) => {
       onMouseEnter={() => setChartIsHovered(true)}
       onMouseLeave={() => setChartIsHovered(false)}
     >
-      <div className="flex justify-between">
-        <div>
-          <div className="flex flex-col sm:flex-row">
-            <HeaderText
-              boldText={companyTicker.toUpperCase()}
-              subText={companyStockData[companyTicker].name}
-            />
-            <HeaderText
-              boldText={high.toFixed(2)}
-              subText="USD"
-              boldTextMarginRight={2}
-            />
-          </div>
-          {/* <HeaderLegend stockKeys={stockKeys} /> */}
-        </div>
-
-        <div className="hidden sm:flex">
-          <HeaderLegend stockKeys={stockKeys} />
-        </div>
-
-        <div>
-          <TimeLabels latestDate={date} />
-        </div>
-      </div>
-      <div className="flex sm:hidden mt-2">
-        <HeaderLegend stockKeys={stockKeys} />
-      </div>
+      <Header
+        companyTicker={companyTicker}
+        latestStock={high}
+        latestDate={date}
+      />
       <StockChartSvg
         stockData={stockData}
         activeTimeLabelObject={activeTimeLabelObject}

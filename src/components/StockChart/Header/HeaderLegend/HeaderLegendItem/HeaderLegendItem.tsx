@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../reducers";
-import { TooltipDifferenceObject } from "../../../../types";
-import { capitalizeString } from "../../StockChartSvg/utils/utils";
+import { RootState } from "../../../../../reducers";
+import { TooltipDifferenceObject } from "../../../../../types";
+import { capitalizeString } from "../../../StockChartSvg/utils/utils";
 import { GraphSvg } from "./GraphSvg/GraphSvg";
 
 interface Props {

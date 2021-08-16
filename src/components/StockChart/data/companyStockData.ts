@@ -1,11 +1,4 @@
-import { StockDataObj } from "../../../types";
-
-interface CompanyData {
-  [key: string]: {
-    name: string;
-    data: StockDataObj[];
-  };
-}
+import { CompanyData } from "../../../types";
 
 export const companyStockData: CompanyData = {
   aapl: {

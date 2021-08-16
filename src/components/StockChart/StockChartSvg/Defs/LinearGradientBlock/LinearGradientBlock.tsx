@@ -1,5 +1,5 @@
 import { supernovaColors } from "../../utils/utils";
-import { LinearGradient } from "../LinearGradient/LinearGradient";
+import { LinearGradient } from "./LinearGradient/LinearGradient";
 
 interface Props {
   stockKeys: string[];

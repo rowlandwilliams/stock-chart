@@ -1,4 +1,4 @@
-import { supernovaColors } from "../StockChartSvg/utils/utils";
+import { supernovaColors } from "../../StockChartSvg/utils/utils";
 import { HeaderLegendItem } from "./HeaderLegendItem/HeaderLegendItem";
 
 interface Props {

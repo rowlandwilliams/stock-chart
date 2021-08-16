@@ -53,3 +53,10 @@ export interface TooltipDifferenceObject {
   close: number;
   low: number;
 }
+
+export interface CompanyData {
+  [key: string]: {
+    name: string;
+    data: StockDataObj[];
+  };
+}

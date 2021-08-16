@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { useDispatch, useSelector } from "react-redux";
-import { changeVisibleDatesDomain } from "../../../actions";
-import { RootState } from "../../../reducers";
-import { timeLabels } from "../data/timeLabels";
+import { changeVisibleDatesDomain } from "../../../../actions";
+import { RootState } from "../../../../reducers";
+import { timeLabels } from "../../data/timeLabels";
 
 interface Props {
   latestDate: number;
