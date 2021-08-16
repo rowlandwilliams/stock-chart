@@ -17,13 +17,16 @@ export const HeaderLegendItem = ({ stockKey, textColor }: Props) => {
 
   const tooltipDifference = Number(tooltipDifferences[stockKey].toFixed(2));
   return (
-    <div className="flex items-center mx-2" style={{ color: textColor }}>
+    <div
+      className="flex justify-center items-center mx-2 w-2/4 sm:w-16"
+      style={{ color: textColor }}
+    >
       <GraphSvg
         svgColor={textColor}
         topChartIsHovered={topChartIsHovered}
         tooltipDifferenceIsPositive={tooltipDifference > 0}
       />
-      <div className="sm:w-10">
+      <div className="">
         {topChartIsHovered
           ? (tooltipDifference > 0 ? "+" : "") + tooltipDifference
           : capitalizeString(stockKey)}

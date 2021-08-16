@@ -32,7 +32,7 @@ export const Header = ({ companyTicker, latestStock, latestDate }: Props) => {
 
         <TimeLabels latestDate={latestDate} />
       </div>
-      <div className="flex sm:hidden mt-2">
+      <div className="flex sm:hidden mt-4">
         <HeaderLegend stockKeys={stockKeys} />
       </div>
     </>
