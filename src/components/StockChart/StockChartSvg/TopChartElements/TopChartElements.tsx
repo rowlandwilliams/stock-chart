@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux";
 import { setTopChartIsHovered } from "../../../../actions";
+import { focusDateTextRectWidth } from "../utils/drawChart/drawTopChart/utils";
 import { margin, topChartHeight } from "../utils/utils";
 
 interface Props {
@@ -32,14 +33,15 @@ export const TopChartElements = ({
       <g id={`lines-${companyTicker}`}></g>
       <g id={`focus-${companyTicker}`}>
         <line></line>
-        <rect></rect>
+        <rect
+          id="tooltip-date-rect"
+          width={focusDateTextRectWidth}
+          height="20px"
+          fill="#1a1b3e"
+        ></rect>
+        <text id="tooltip-date-text"></text>
+        <rect id="tooltip-diff-rect"></rect>
       </g>
-      <rect
-        id={`overlay-${companyTicker}`}
-        width="100%"
-        height="100%"
-        fill="none"
-      ></rect>
     </g>
   );
 };

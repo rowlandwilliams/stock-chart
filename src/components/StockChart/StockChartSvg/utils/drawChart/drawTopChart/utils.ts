@@ -13,6 +13,8 @@ import {
   topChartHeight,
 } from "../../utils";
 
+export const focusDateTextRectWidth = 65;
+
 export const getTopChartSelections = (
   companyName: string,
   topChartGroup: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>
@@ -25,8 +27,12 @@ export const getTopChartSelections = (
     focusGroup: focusGroup,
     focusLine: focusGroup.select<SVGSVGElement>("line"),
     focusCircles: focusGroup.selectAll<SVGSVGElement, unknown>("circle"),
-    focusText: focusGroup.selectAll<SVGSVGElement, unknown>("text"),
-    focusTextRects: focusGroup.selectAll<SVGSVGElement, unknown>("rect"),
+    focusText: focusGroup.selectAll<SVGSVGElement, unknown>(
+      ".tooltip-diff-text"
+    ),
+    focusTextRects: focusGroup.select<SVGSVGElement>("#tooltip-diff-rect"),
+    focusDateText: focusGroup.select<SVGSVGElement>("#tooltip-date-text"),
+    focusDateTextRect: focusGroup.select<SVGSVGElement>("#tooltip-date-rect"),
   };
 };
 
@@ -47,8 +53,17 @@ export const addFocusLineCirclesAndText = (
   focusLine: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>,
   focusCircles: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   convertedData: ConvertedData[],
-  focusText: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>
+  focusText: d3.Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
+  focusDateText: Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  focusDateTextRect: Selection<SVGSVGElement, unknown, HTMLElement, any>
 ) => {
+  focusDateText
+    .data(convertedData)
+    .attr("fill", "white")
+    .attr("font-size", "0.6rem");
+
+  focusDateTextRect.attr("width", focusDateTextRectWidth);
+
   focusLine
     .attr("stroke", "white")
     .attr("stroke-svgWidth", 1)
@@ -68,9 +83,9 @@ export const addFocusLineCirclesAndText = (
   focusText
     .data(convertedData)
     .join("text")
+    .attr("class", "tooltip-diff-text")
     .attr("fill", (d, i) => supernovaColors[i]);
 };
-
 // mousmove function for when svg is hovered
 export const mousemove = (
   event: PointerEvent,
@@ -80,7 +95,9 @@ export const mousemove = (
   focusLine: Selection<SVGSVGElement, unknown, HTMLElement, any>,
   focusCircles: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
   focusText: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
-  focusTextRects: Selection<SVGSVGElement, unknown, SVGSVGElement, unknown>,
+  focusTextRects: Selection<SVGSVGElement, unknown, HTMLElement, unknown>,
+  focusDateText: Selection<SVGSVGElement, unknown, HTMLElement, any>,
+  focusDateTextRect: Selection<SVGSVGElement, unknown, HTMLElement, any>,
   width: number,
   latestStock: number
 ) => {
@@ -143,22 +160,25 @@ export const mousemove = (
 
     const textWidths: number[] = [];
 
+    // for a given data point, calculate the widths of each label
     focusText.each((d, i, nodes) => {
       const node = select(nodes[i]).node() as SVGSVGElement;
       const width = node.getBBox().width;
       textWidths.push(width + 10);
     });
 
+    // use maximum to caluclate tooltip width
     const maxTextWidth = Math.max(...textWidths);
     const maxTextWidthAndOffset = maxTextWidth + 5;
 
+    // translate tooltip rectangle
     focusTextRects
       .attr("rx", 2)
       .attr("fill", brushColor)
       .attr("width", maxTextWidth)
       .attr("height", "80px")
       .attr("transform", (d: any, i) =>
-        getRectTranslationFromData(
+        getTooltipRectTranslationFromData(
           x,
           dFinal,
           xMouse,
@@ -171,6 +191,7 @@ export const mousemove = (
         )
       );
 
+    // translate tooltip text
     focusText
       .text(
         (d: any) =>
@@ -180,7 +201,7 @@ export const mousemove = (
       )
       .attr("font-size", "0.75rem")
       .attr("transform", (d: any, i) =>
-        getTextTranslationFromData(
+        getTooltipTextTranslationFromData(
           sequentialLineData,
           d,
           idxFinal,
@@ -195,11 +216,25 @@ export const mousemove = (
         )
       )
       .attr("text-anchor", "start");
+
+    // tranalate rect behind date (to cover x axis labels)
+    focusDateTextRect.attr("transform", (d: any, i, nodes) => {
+      return `translate(${x(dFinal) - focusDateTextRectWidth / 2}, ${
+        topChartHeight - margin // date rect has width 70px
+      })`;
+    });
+
+    // translate text
+    focusDateText
+      .text(new Date(dFinal).toLocaleDateString())
+      .attr("transform", (d: any, i, nodes) =>
+        getDateTextTranslationFromData(x, dFinal, width, y, i, nodes)
+      );
   }
 };
 
 // translate text labels based on value at a given date
-const getTextTranslationFromData = (
+const getTooltipTextTranslationFromData = (
   sequentialLineData: number[],
   d: any,
   idxFinal: number,
@@ -231,7 +266,7 @@ const getTextTranslationFromData = (
 };
 
 // translate text rectablges based on value at a given date
-const getRectTranslationFromData = (
+const getTooltipRectTranslationFromData = (
   x: d3.ScaleTime<number, number, never>,
   dFinal: number,
   xMouse: number,
@@ -252,4 +287,32 @@ const getRectTranslationFromData = (
       (y(midStockValue) + i * textHeight - 2 * textHeight) +
       ")")
   );
+};
+
+const getDateTextTranslationFromData = (
+  x: d3.ScaleTime<number, number, never>,
+  dFinal: number,
+  width: number,
+  y: d3.ScaleLinear<number, number, never>,
+  i: number,
+  nodes: SVGSVGElement[] | ArrayLike<SVGSVGElement>
+) => {
+  const scaledXValue = x(dFinal);
+  // if at rights hand side of x axis translate back to left to prevent cutoff
+  if (scaledXValue > width - focusDateTextRectWidth / 2)
+    return `translate(${width - focusDateTextRectWidth + 10}, ${
+      topChartHeight - margin / 2 // date rect has width 70px
+    })`;
+
+  // if close to left side offset to right to prevent cutoff
+  if (scaledXValue < focusDateTextRectWidth / 2)
+    return `translate(0, ${
+      topChartHeight - margin / 2 // date rect has width 70px
+    })`;
+
+  const node = select(nodes[i]).node() as SVGSVGElement;
+  const nodeWidth = node.getBBox().width;
+  return `translate(${x(dFinal) - nodeWidth / 2}, ${
+    topChartHeight - margin / 2
+  })`;
 };

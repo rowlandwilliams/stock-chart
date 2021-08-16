@@ -37,3 +37,5 @@ export const getInitialChartSelections = (companyName: string) => {
     areaGroup: topChartGroup.select<SVGSVGElement>(`#area-${companyName}`),
   };
 };
+
+

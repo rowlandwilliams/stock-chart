@@ -39,6 +39,8 @@ export const drawTopChart = (
     focusCircles,
     focusText,
     focusTextRects,
+    focusDateText,
+    focusDateTextRect,
   } = getTopChartSelections(companyName, topChartGroup);
 
   // define line plotting function based on x and y scales
@@ -70,7 +72,14 @@ export const drawTopChart = (
   );
 
   // add focus lines and tooltip
-  addFocusLineCirclesAndText(focusLine, focusCircles, convertedData, focusText);
+  addFocusLineCirclesAndText(
+    focusLine,
+    focusCircles,
+    convertedData,
+    focusText,
+    focusDateText,
+    focusDateTextRect
+  );
 
   topChartGroup
     .on("mouseenter", () => {
@@ -89,6 +98,8 @@ export const drawTopChart = (
         focusCircles,
         focusText,
         focusTextRects,
+        focusDateText,
+        focusDateTextRect,
         svgWidth,
         latestStock
       )
