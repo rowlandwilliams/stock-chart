@@ -1,4 +1,4 @@
-[## Stock-chart component](https://rowlandwilliams.github.io/stock-chart/)
+##[Stock-chart component](https://rowlandwilliams.github.io/stock-chart/)
 
 ![stock chart image](stock-chart0.jpg)
 
